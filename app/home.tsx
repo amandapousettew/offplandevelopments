@@ -20,7 +20,7 @@ type Project=(typeof projects)[number];
 const languages=["English","Svenska","Nederlands","Português","Français"];
 const heroIds=[0,2,3];
 const titles:Record<string,string>={"Buyer":"Talk to our team","Agency partner":"Become an agency partner","Developer":"Introduce a development","Project updates":"Receive project updates"};
-function Brand(){return <a className="brand" href="#" aria-label="OffplanDevelopments, home"><svg viewBox="0 0 42 39" aria-hidden="true"><path d="M2 36V15L16 4v32M14 36V18L28 7v29M26 36V21l14-11v26"/></svg>OffplanDevelopments</a>}
+function Brand(){return <a className="brand" href="#" aria-label="OffplanDevelopments, home"><img src="./offplandevelopments-logo.png" width={216} height={84} alt="OffplanDevelopments"/></a>}
 function Form({kind,project,initialMessage,onSuccess,review}:{review?:boolean,kind:string,project:string,initialMessage:string,onSuccess:()=>void}){
  const {tr,lang}=useLanguage();
  const [state,set]=useState("idle");

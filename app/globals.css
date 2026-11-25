@@ -91,3 +91,7 @@ header nav.open .mobileMenuTools{display:grid;gap:16px;padding-top:18px}
 
 .projectNamePrice{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin:8px 0 12px}.projectNamePrice .projectTitle{min-width:0;text-align:left;margin:0;line-height:1.15}.projectNamePrice strong{flex-shrink:0;font-size:.95rem;white-space:nowrap;font-weight:600}.cardFacts{margin-top:0}
 @media(max-width:680px){.projectNamePrice{gap:10px}.projectNamePrice .projectTitle{font-size:24px}.projectNamePrice strong{font-size:.85rem}}
+
+header .brand img,footer .brand img{display:block;width:216px;height:84px;max-width:100%;object-fit:contain}
+header:has(.brand img){min-height:88px;height:auto}
+@media(max-width:680px){#root>header:has(.brand img),body>header:has(.brand img){min-height:76px;padding-block:0}header .brand img,footer .brand img{width:200px;height:78px}}

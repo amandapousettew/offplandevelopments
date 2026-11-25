@@ -64,3 +64,30 @@ header nav.open .mobileMenuTools{display:grid;gap:16px;padding-top:18px}
 .heroFoot .location>span{flex-basis:100%;padding-left:21px;font-size:.68rem}
 .heroFoot .location svg{width:16px;flex-shrink:0}
 }
+
+.mapHeading{padding:4px 12px;border-radius:8px 8px 0 0;margin-bottom:0;border-bottom:0;min-height:48px;font-size:.85rem}
+.mapLayout{border-radius:0 0 8px 8px;align-items:start}
+.mapWorkspace{min-width:0;background:#fafafa}
+.mapLayout .mapCanvas{height:380px;min-height:0;width:100%}
+.mapWorkspace .areaControls{padding:12px;gap:8px}
+.mapWorkspace .areaControls button{min-height:40px;padding:8px 12px;line-height:1.25;border-radius:6px;font-size:.82rem}
+.mapWorkspace .mapStatus{padding:0 12px 10px;margin:0;font-size:.78rem;line-height:1.4}
+.mapLayout .mapCanvas .leaflet-control-attribution{font:10px/1.4 Arial,sans-serif;max-width:100%;padding:2px 5px}
+.mapLayout .leaflet-control-attribution a{font-size:inherit}
+.mapLayout .leaflet-control-zoom a{font:22px/32px Arial,sans-serif;width:32px;height:32px}
+.mapLayout .mutedMarker{background:#fff;color:#444;border:1px solid #777;font-size:24px}
+.mapEmpty strong{font-size:1rem}.mapEmpty p{font-size:.875rem;line-height:1.5}.mapLayout .mapEmpty button{width:auto;border:1px solid var(--ink);padding:10px 14px}
+@media(max-width:680px){
+.mapLayout{grid-template-columns:minmax(0,1fr)}
+.mapLayout .mapCanvas{height:280px;min-height:0}
+.mapLayout aside{padding:16px}
+.mapHeading{font-size:.8rem;gap:8px}
+.mapHeading>span{max-width:65%;line-height:1.35}
+.mapWorkspace .areaControls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mapWorkspace .areaControls button{width:100%;text-align:center;white-space:normal}
+.mapWorkspace .areaControls button.filter{padding:9px 10px}
+.mapLayout .mapCanvas .leaflet-control-attribution{font-size:10px}
+}
+
+.projectNamePrice{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin:8px 0 12px}.projectNamePrice .projectTitle{min-width:0;text-align:left;margin:0;line-height:1.15}.projectNamePrice strong{flex-shrink:0;font-size:.95rem;white-space:nowrap;font-weight:600}.cardFacts{margin-top:0}
+@media(max-width:680px){.projectNamePrice{gap:10px}.projectNamePrice .projectTitle{font-size:24px}.projectNamePrice strong{font-size:.85rem}}

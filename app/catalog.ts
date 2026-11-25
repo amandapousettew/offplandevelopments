@@ -14,3 +14,14 @@ const rows = [
 ] as const;
 export const projects=rows.map(([name,town,country,price,type,description],id)=>({id,name,town,country,price,type,description,region:country==="Spain"?"Costa Blanca":(["Lagos","Tavira"].includes(town)?"Algarve":town==="Porto"?"Porto":town==="Comporta"?"Alentejo":"Lisbon region")}));
 export const money=(n:number)=>"€"+new Intl.NumberFormat("en-IE").format(n);
+
+
+// Amenities follow the descriptions in the illustrative catalogue.
+// Replace these with developer-confirmed project data when importing listings.
+export const amenityOptions = [
+ {id:"seaView",en:"Sea view",nl:"Zeezicht",pattern:/sea-facing/},
+ {id:"balcony",en:"Balcony or terrace",nl:"Balkon of terras",pattern:/balcon|terrace/},
+ {id:"garden",en:"Garden",nl:"Tuin",pattern:/garden/},
+ {id:"pool",en:"Swimming pool",nl:"Zwembad",pattern:/pool/}
+] as const;
+export const rentalStatus = (_project: (typeof projects)[number]): "unconfirmed" | "confirmed" => "unconfirmed";

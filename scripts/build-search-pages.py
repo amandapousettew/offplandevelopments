@@ -14,21 +14,30 @@ BASE = "https://amandapousettew.github.io/offplandevelopments/"
 PREFIX = urlsplit(BASE).path
 CONFIG = json.loads((ROOT / "app/public-site.json").read_text())
 PROJECTS = json.loads((ROOT / "app/project-data.json").read_text())
+SWEDISH = json.loads((ROOT / "app/sv.json").read_text())
 BY_SLUG = {project["slug"]: project for project in PROJECTS}
 LANGUAGES = {"en": "English", "sv": "Svenska", "nl": "Nederlands"}
 PROJECT_PREFIXES = {"en": "projects/", "sv": "sv/projekt/", "nl": "nl/projecten/"}
 MONTHS_NOVEMBER = {"en": "November", "sv": "november", "nl": "november"}
 AGENT_PROJECTS = ["noa-villajoyosa", "polop-villas", "sierra-verde-finestrat"]
-URLS = [BASE]
+URLS = [BASE, BASE + "sv/"]
 
 
 def path_to(path=""):
     return PREFIX + path
 
 
+def catalogue_url(lang, *, anchor="", **params):
+    root = "sv/" if lang == "sv" else ""
+    if lang != "sv":
+        params["lang"] = lang
+    query = "?" + urlencode(params) if params else ""
+    return path_to(root + query + ("#" + anchor if anchor else ""))
+
+
 def project_path(project, lang):
     slug = project["slug"]
-    prefix = PROJECT_PREFIXES[lang] if slug in CONFIG["localizedProjects"] else PROJECT_PREFIXES["en"]
+    prefix = PROJECT_PREFIXES[lang] if lang == "sv" or slug in CONFIG["localizedProjects"] else PROJECT_PREFIXES["en"]
     return f"{prefix}{slug}/"
 
 
@@ -43,9 +52,9 @@ def link(url, text, class_name=""):
 
 def whatsapp(lang):
     person = contact_for(lang)
-    name = "WhatsApp " + person["name"]
+    label = COPY[lang]["labels"]["whatsapp"]
     url = "https://wa.me/" + person["number"][1:]
-    return (f'<a class="whatsapp floating-whatsapp" href="{url}" aria-label="{escape(name)}" '
+    return (f'<a class="whatsapp floating-whatsapp" href="{url}" aria-label="{escape(label, quote=True)}" '
             f'target="_blank" rel="noopener noreferrer"><img src="{path_to("whatsapp.svg")}" '
             'width="20" height="20" alt=""><span>WhatsApp</span></a>')
 
@@ -53,7 +62,7 @@ def contacts(lang):
     primary = contact_for(lang)
     team = [primary] + [person for person in CONFIG["team"].values() if person != primary]
     rows = ''.join(
-        f'<div><strong>{escape(person["name"])}</strong><br>{escape(" · ".join(person["languages"]))}<br>'
+        f'<div><strong>{escape(" · ".join(person["languages"]))}</strong><br>'
         f'{link("tel:" + person["number"], person["display"])}</div>'
         for person in team
     )
@@ -107,7 +116,7 @@ def page(path, lang, title, description, body, alternates, project=None):
 <body>
  <header class="site-header">
   <div class="shell header-row">
-   <a href="{path_to()}"><img src="{path_to("offplandevelopments-logo.svg")}" width="206" height="57" alt="OffplanDevelopments"></a>
+   <a href="{catalogue_url(lang)}"><img src="{path_to("offplandevelopments-logo.svg")}" width="206" height="57" alt="OffplanDevelopments"></a>
    <nav>{nav}</nav>
   </div>
  </header>
@@ -119,7 +128,7 @@ def page(path, lang, title, description, body, alternates, project=None):
   <div class="shell">
    <h2>{escape(labels["contact"])}</h2>
    {contacts(lang)}
-   <p>{link(path_to(), "OffplanDevelopments")}</p>
+   <p>{link(catalogue_url(lang), "OffplanDevelopments")}</p>
   </div>
  </footer>
  {whatsapp(lang)}
@@ -143,7 +152,13 @@ def money(amount, lang):
 
 
 def project_text(project, lang):
-    return PROJECT_COPY.get(project["slug"], {}).get(lang, project)
+    edited = PROJECT_COPY.get(project["slug"], {}).get(lang, {})
+    if lang == "sv":
+        fields = ("description", "bedrooms", "area", "completion", "tax", "source", "payment", "note", "tenure")
+        localized = {key: SWEDISH.get(project[key], project[key]) for key in fields}
+        title = f'{project["name"]} | {SWEDISH.get(project["type"], project["type"])} i {project["town"]}'
+        return {**project, **localized, "title": title, **edited}
+    return {**project, **edited}
 
 
 def shown_price(project, lang):
@@ -155,7 +170,7 @@ def shown_price(project, lang):
         ("nl", "Excl. VAT"): "excl. btw", ("sv", "Excl. VAT"): "exkl. moms",
         ("nl", "VAT basis to confirm"): "btw te bevestigen", ("sv", "VAT basis to confirm"): "moms att bekräfta"
     }
-    note = suffixes.get((lang, project["priceNote"]), project["priceNote"])
+    note = SWEDISH.get(project["priceNote"], project["priceNote"]) if lang == "sv" else suffixes.get((lang, project["priceNote"]), project["priceNote"])
     price = labels["from"] + " " + money(project["price"], lang)
     return price + (" · " + note if note else "")
 
@@ -304,7 +319,7 @@ def build_guide(lang):
     body += section(labels["homes"], project_cards([p for p in PROJECTS if p["category"] == "Residential development"], lang))
     body += '<div class="questions">' + "".join(section(heading, paragraph(copy)) for heading, copy in content["questions"]) + '</div>'
     body += section(labels["request"], paragraph(labels["role"]) + enquiry_form(lang), "enquiry")
-    body += '<div class="section-links bottom-links">' + link(path_to("?lang=" + ("nl" if lang == "nl" else "en") + "#projekt"), labels["browse"]) + link(path_to(CONFIG["investments"][lang]), labels["investment_projects"]) + '</div>'
+    body += '<div class="section-links bottom-links">' + link(catalogue_url(lang, anchor="projekt"), labels["browse"]) + link(path_to(CONFIG["investments"][lang]), labels["investment_projects"]) + '</div>'
     page(CONFIG["guides"][lang], lang, f"{title} | {subtitle}", description, body, CONFIG["guides"])
 
 
@@ -318,7 +333,7 @@ def build_agents(lang):
     projects = [BY_SLUG[slug] for slug in AGENT_PROJECTS]
     body += section(labels["compare"], project_cards(projects, lang))
     body += section(labels["ask_intro"], enquiry_form(lang, agent=True), "enquiry")
-    developer = paragraph(labels["developer_text"]) + link(path_to("?enquiry=developer&lang=" + ("nl" if lang == "nl" else "en") + "#partner"), labels["developer_cta"])
+    developer = paragraph(labels["developer_text"]) + link(catalogue_url(lang, anchor="partner", enquiry="developer"), labels["developer_cta"])
     body += section(labels["developer"], developer)
     page(CONFIG["agents"][lang], lang, title, description, body, CONFIG["agents"])
 
@@ -328,7 +343,7 @@ def build_investments(lang):
     labels = COPY[lang]["labels"]
     body = intro(heading, description)
     body += section(labels["investment_projects"], project_cards([p for p in PROJECTS if p["category"] != "Residential development"], lang))
-    body += '<div class="bottom-links">' + link(path_to("?catalogue=investments&lang=" + ("nl" if lang == "nl" else "en") + "#projekt"), labels["browse"]) + '</div>'
+    body += '<div class="bottom-links">' + link(catalogue_url(lang, anchor="projekt", catalogue="investments"), labels["browse"]) + '</div>'
     page(CONFIG["investments"][lang], lang, title, description, body, CONFIG["investments"])
 
 
@@ -340,7 +355,7 @@ def build_project(project, lang):
     title = text.get("title", f'{project["name"]} | New development in {project["town"]}')
     path = project_path(project, lang)
     actions = link("#enquiry", request, "button")
-    saved_link = path_to("?" + urlencode({"save": project["slug"], "saved": 1, "lang": "nl" if lang == "nl" else "en"}) + "#projekt")
+    saved_link = catalogue_url(lang, anchor="projekt", save=project["slug"], saved=1)
     shortlist_label = {"en": "Save to shortlist", "sv": "Spara bland favoriter", "nl": "Bewaar bij favorieten"}
     actions += link(saved_link, shortlist_label[lang], "secondary-link")
     body = intro(project["name"], text["description"], project["town"] + " · " + project["region"], f'<div class="section-links">{actions}</div>')
@@ -350,7 +365,7 @@ def build_project(project, lang):
               (labels["layout"], text["bedrooms"]), (labels["area"], text["area"]), (labels["price"], shown_price(project, lang)),
               (labels["tax"], text["tax"]), (labels["completion"], text["completion"]), (labels["status"], labels["status_value"])]
     if not residential:
-        values.append(("Ownership and use", project["tenure"]))
+        values.append(({"en": "Ownership and use", "sv": "Ägande och användning", "nl": "Eigendom en gebruik"}[lang], text["tenure"]))
     body += section(labels["facts"], facts(values))
     source = paragraph(labels["source"] + " · " + text["source"], "meta")
     source += paragraph(labels["reviewed"] + " " + date_label(project["reviewed"], lang), "meta")
@@ -364,7 +379,7 @@ def build_project(project, lang):
         share = "mailto:?" + urlencode({"subject": project["name"], "body": BASE + path})
         enquiry_intro = paragraph(labels["role"]) + link(share, labels["share"], "secondary-link")
     body += section(request, enquiry_intro + enquiry_form(lang, project=project), "enquiry")
-    alternates = {code: project_path(project, code) for code in LANGUAGES} if project["slug"] in CONFIG["localizedProjects"] else {"en": path}
+    alternates = {code: project_path(project, code) for code in LANGUAGES if code != "nl" or project["slug"] in CONFIG["localizedProjects"]}
     page(path, lang, title, text["description"], body, alternates, project)
 
 
@@ -375,8 +390,8 @@ def main():
         build_investments(lang)
     for project in PROJECTS:
         build_project(project, "en")
+        build_project(project, "sv")
         if project["slug"] in CONFIG["localizedProjects"]:
-            build_project(project, "sv")
             build_project(project, "nl")
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     sitemap += "".join(f"  <url><loc>{url}</loc></url>\n" for url in URLS) + "</urlset>\n"

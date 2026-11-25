@@ -15,7 +15,7 @@ COPY = {
             ("What about Portugal?", "Our documented homes are in Spain. If you are looking in Portugal, tell us your preferred region, budget and how you plan to use the home.")
         ],
         "agents": ("For estate agents on the Costa Blanca", "Meet the developers behind selected Costa Blanca projects.",
-                   "OffplanDevelopments connects Dutch and Swedish estate agents with developers of selected new-build homes on Spain’s Costa Blanca. Tell Amanda or Potros what your client is looking for. We’ll share relevant project information and introduce you to the developer. Your agency stays your client’s point of contact."),
+                   "OffplanDevelopments connects Dutch and Swedish estate agents with developers of selected new-build homes on Spain’s Costa Blanca. Tell us what your client is looking for. We’ll share relevant project information and introduce you to the developer. Your agency stays your client’s point of contact."),
         "steps": [
             ("Send a buyer brief", "Tell us the area, budget, property type and timing. You can leave out your buyer’s name and contact details at this stage."),
             ("Review the project information", "We share relevant documents and ask the developer to confirm current prices, options and availability."),
@@ -27,7 +27,7 @@ COPY = {
             "guide": "Buyer guide", "agents": "For estate agents", "investments": "Investments", "home": "Developments",
             "regions": "Compare areas and projects", "compare": "Compare selected Costa Blanca projects", "steps": "How the introduction works",
             "homes": "Residential projects in Spain", "investment_projects": "Investment and tourist-use projects", "ask_intro": "Request a developer introduction",
-            "request": "Request current prices and floor plans", "investment_request": "Request current project information", "contact": "Contact the team",
+            "request": "Request current prices and floor plans", "investment_request": "Request current project information", "contact": "Contact the team", "whatsapp": "Message us on WhatsApp",
             "share": "Share with my agent", "facts": "Project facts", "type": "Property type", "layout": "Layout", "area": "Area",
             "price": "Price in project documents", "tax": "Tax and costs", "completion": "Estimated completion", "status": "Availability",
             "status_value": "Confirm on request", "reviewed": "Project documents reviewed", "source": "Sources",
@@ -64,7 +64,7 @@ COPY = {
             ("Söker du bostad i Portugal?", "Vårt dokumenterade utbud finns i Spanien. Berätta gärna vilken region, budget och typ av användning du tänker dig om du letar i Portugal.")
         ],
         "agents": ("Nyproduktion på Costa Blanca för mäklare", "Träffa utvecklarna bakom utvalda projekt på Costa Blanca.",
-                   "OffplanDevelopments introducerar svenska och nederländska fastighetsmäklare till utvecklare av nyproduktion på Costa Blanca. Berätta för Amanda eller Potros vad din köpare söker. Vi delar relevant projektunderlag och ordnar kontakten med utvecklaren. Du är fortsatt köparens kontakt som mäklare."),
+                   "OffplanDevelopments hjälper svenska och nederländska mäklare att komma i kontakt med utvecklare av nyproduktion på Costa Blanca. Berätta vad din köpare söker, så tar vi fram projekt som passar och presenterar dig för utvecklaren. Du behåller kontakten med din köpare."),
         "steps": [
             ("Beskriv vad köparen söker", "Skicka område, budget, bostadstyp och tidshorisont. Köparens namn och kontaktuppgifter kan vänta."),
             ("Gå igenom projektunderlaget", "Vi delar relevanta dokument och ber utvecklaren bekräfta aktuella priser, alternativ och tillgänglighet."),
@@ -76,7 +76,7 @@ COPY = {
             "guide": "Köparguide", "agents": "För mäklare", "investments": "Investeringar", "home": "Projektkatalog",
             "regions": "Jämför områden och projekt", "compare": "Jämför utvalda projekt på Costa Blanca", "steps": "Så fungerar introduktionen",
             "homes": "Nyproducerade bostäder i Spanien", "investment_projects": "Investeringar och turistlägenheter", "ask_intro": "Be om en introduktion till utvecklaren",
-            "request": "Få aktuella priser och planritningar", "investment_request": "Be om aktuellt projektunderlag", "contact": "Kontakta oss",
+            "request": "Få aktuella priser och planritningar", "investment_request": "Be om aktuellt projektunderlag", "contact": "Kontakta oss", "whatsapp": "Skriv till oss på WhatsApp",
             "share": "Dela med min mäklare", "facts": "Projektfakta", "type": "Bostadstyp", "layout": "Planlösning", "area": "Yta",
             "price": "Pris enligt projektunderlaget", "tax": "Moms och kostnader", "completion": "Beräknad färdigställning", "status": "Tillgänglighet",
             "status_value": "Bekräftas på förfrågan", "reviewed": "Projektunderlaget granskat", "source": "Källor",
@@ -89,7 +89,7 @@ COPY = {
             "developer": "Har du ett projekt på Costa Blanca?", "developer_text": "Skicka läge, planerad säljstart och aktuellt projektunderlag så kan vi se om det passar köparna våra mäklarkontakter arbetar med.",
             "developer_cta": "Presentera ett projekt",
         },
-        "types": {"Apartments": "Lägenheter", "Villas": "Villor", "Tourist apartments": "Turistlägenheter", "Hotel investment": "Hotellinvestering", "Investment": "Investering"},
+        "types": {"Apartments": "Lägenheter", "Villas": "Villor", "Tourist apartments": "Turistlägenheter", "Hotel investment": "Hotellinvestering", "Apart-hotel investment": "Investering i lägenhetshotell", "Pre-launch investment": "Investering inför säljstart", "Investment": "Investering"},
         "form": {
             "name": "Namn", "email": "Mejl", "agency": "Mäklarfirma", "phone": "Telefon (valfritt)", "area": "Önskat område",
             "budget": "Budget", "type": "Bostadstyp", "timing": "När vill köparen köpa?", "message": "Övriga önskemål (valfritt)",
@@ -113,7 +113,7 @@ COPY = {
             ("Zoek je een woning in Portugal?", "Ons gedocumenteerde aanbod ligt in Spanje. Laat ons weten welke regio in Portugal je overweegt, wat je budget is en hoe je de woning wilt gebruiken.")
         ],
         "agents": ("Nieuwbouw aan de Costa Blanca voor makelaars", "Maak kennis met de ontwikkelaars achter geselecteerde projecten aan de Costa Blanca.",
-                   "OffplanDevelopments brengt Nederlandse en Zweedse makelaars in contact met projectontwikkelaars aan de Costa Blanca. Vertel Amanda of Potros wat je klant zoekt. We delen de relevante projectinformatie en stellen je voor aan de ontwikkelaar. Jij blijft het aanspreekpunt van je klant."),
+                   "OffplanDevelopments brengt Nederlandse en Zweedse makelaars in contact met projectontwikkelaars aan de Costa Blanca. Vertel ons wat je klant zoekt. We delen de relevante projectinformatie en stellen je voor aan de ontwikkelaar. Jij blijft het aanspreekpunt van je klant."),
         "steps": [
             ("Beschrijf wat je klant zoekt", "Stuur de regio, het budget, het woningtype en de planning. Je kunt de naam en contactgegevens van je klant voorlopig weglaten."),
             ("Bekijk de projectinformatie", "We delen relevante documenten en vragen de ontwikkelaar om de actuele prijzen, opties en beschikbaarheid te bevestigen."),
@@ -125,7 +125,7 @@ COPY = {
             "guide": "Koopgids", "agents": "Voor makelaars", "investments": "Investeringen", "home": "Projecten",
             "regions": "Vergelijk regio’s en projecten", "compare": "Vergelijk geselecteerde projecten aan de Costa Blanca", "steps": "Zo werkt de introductie",
             "homes": "Nieuwbouwwoningen in Spanje", "investment_projects": "Investeringen en toeristische appartementen", "ask_intro": "Vraag een introductie bij de ontwikkelaar aan",
-            "request": "Vraag actuele prijzen en plattegronden op", "investment_request": "Vraag actuele projectinformatie op", "contact": "Neem contact op",
+            "request": "Vraag actuele prijzen en plattegronden op", "investment_request": "Vraag actuele projectinformatie op", "contact": "Neem contact op", "whatsapp": "Stuur ons een WhatsApp-bericht",
             "share": "Deel met mijn makelaar", "facts": "Projectgegevens", "type": "Woningtype", "layout": "Indeling", "area": "Oppervlakte",
             "price": "Prijs uit de projectdocumenten", "tax": "Btw en kosten", "completion": "Verwachte oplevering", "status": "Beschikbaarheid",
             "status_value": "Op aanvraag te bevestigen", "reviewed": "Projectdocumenten gecontroleerd op", "source": "Bronnen",
@@ -153,14 +153,7 @@ COPY = {
 PROJECT_COPY = {
     "noa-villajoyosa": {
         "sv": {
-            "title": "Noa Villajoyosa | Nyproducerade lägenheter på Costa Blanca",
-            "description": "Noa är ett nybygge med lägenheter på Calle Colón 111 i Villajoyosa. Utvecklarens prislista visar två lägenhetstyper fördelade på fyra våningar.",
-            "bedrooms": "Varierar mellan lägenheterna", "area": "72,99–75,24 m² byggd yta",
-            "tax": "Prislistan anger priser exklusive 10 % spansk moms.",
-            "completion": "Sent 2027 till tidigt 2028 enligt projektmappen. Navigationsarket anger tidigt 2028.",
-            "payment": "Underlaget anger 12 000 € i reservationsbelopp, sedan 30 % vid huvudkontrakt, 40 % när stommen står klar och 30 % vid tillträde hos notarien. Be om bekräftelse på hur reservationsbeloppet räknas av.",
-            "note": "Några lägenheter är reserverade enligt prislistan från 13 april 2026. Be om en uppdaterad lista över enheter och planritningen för den du är intresserad av.",
-            "source": "Utvecklarens pris- och tillgänglighetslista från 13 april 2026 samt projektmappen."
+            "title": "Noa Villajoyosa | Nyproducerade lägenheter på Costa Blanca"
         },
         "nl": {
             "title": "Noa Villajoyosa | Nieuwbouwappartementen aan de Costa Blanca",
@@ -175,14 +168,7 @@ PROJECT_COPY = {
     },
     "polop-villas": {
         "sv": {
-            "title": "Polop Villas | Nyproducerade villor med pool på Costa Blanca",
-            "description": "Polop Villas omfattar 16 tvåplansvillor i Polop. Utvecklarens underlag beskriver tre sovrum med egna badrum, privat pool, trädgård, takterrass och två parkeringsplatser.",
-            "bedrooms": "Tre sovrum", "area": "127 m² invändigt, 155 m² inklusive terrasser",
-            "tax": "Prislistan anger priser exklusive 10 % spansk moms.",
-            "completion": "Sent 2027 till tidigt 2028 enligt projektunderlaget.",
-            "payment": "Underlaget anger 12 000 € i reservationsbelopp, sedan 30 % vid huvudkontrakt, 40 % när stommen står klar och 30 % vid tillträde hos notarien. Be om bekräftelse på hur reservationsbeloppet räknas av.",
-            "note": "Några villor var markerade som reserverade och en som visningshus i utvecklarens prislista. Tomtstorlek och specifikation varierar per villa. Be om aktuella uppgifter för den enhet du överväger.",
-            "source": "Utvecklarens prislista från 25 september 2026 och tekniska beskrivning."
+            "title": "Polop Villas | Nyproducerade villor med pool på Costa Blanca"
         },
         "nl": {
             "title": "Polop Villas | Nieuwbouwvilla’s met zwembad aan de Costa Blanca",

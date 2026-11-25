@@ -3,12 +3,12 @@ import {useLanguage} from "./language";
 import {TeamContacts} from "./team-contacts";
 
 export function BuyerGuidance(){
- const {lang}=useLanguage(),nl=lang==="nl";
+ const {tr}=useLanguage();
  const points=[
-  {icon:Files,title:nl?"Een schriftelijk overzicht van prijs en kosten":"A written price and cost breakdown",text:nl?"Vertel ons welk project en welke woning je op het oog hebt. We vragen de ontwikkelaar om de actuele prijs, beschikbaarheid, btw, inbegrepen opties en het betalingsschema. Je krijgt de bedragen bij elkaar, zodat je weet wat je moet vergelijken.":"Tell us which project and home you are considering. We ask the developer for the current price, availability, VAT, included extras and payment schedule, and put those figures together for you to compare."},
-  {icon:MapPin,title:nl?"De documenten van jouw specifieke woning":"The documents for your specific home",text:nl?"We vragen naar de plattegrond, technische omschrijving, locatie en verwachte oplevering. Als documenten elkaar tegenspreken of een gegeven ontbreekt, leggen we dat eerst terug bij de ontwikkelaar.":"We request the floor plan, specification, location and expected completion date. When documents conflict or information is missing, we take the question back to the developer before you decide."},
-  {icon:MessagesSquare,title:nl?"Een vast aanspreekpunt voor projectvragen":"A named contact for project questions",text:nl?"Potros helpt je in het Nederlands en Engels. Amanda helpt je in het Zweeds en Engels. Vertel ons wat je zoekt. Je kunt de informatie delen met je makelaar of ons vragen om een introductie bij een passende makelaar.":"Speak to Potros in Dutch or English, or Amanda in Swedish or English. Tell us what you’re looking for. Share the project information with your agent or ask us to introduce you to a suitable agent."}
+  {icon:Files,title:tr("A written price and cost breakdown"),text:tr("Tell us which project and home you are considering. We ask the developer for the current price, availability, VAT, included extras and payment schedule, and put those figures together for you to compare.")},
+  {icon:MapPin,title:tr("The documents for your specific home"),text:tr("We request the floor plan, specification, location and expected completion date. When documents conflict or information is missing, we take the question back to the developer before you decide.")},
+  {icon:MessagesSquare,title:tr("Project advice in your language"),text:tr("Ask us about a project in English, Dutch or Swedish. You can share the details with your own agent or ask us to introduce you to one in the area.")}
  ];
- return <section className="guidance" id="om"><div><small className="eyeline">{nl?"ZO BEGELEIDEN WE JE":"HOW WE HELP BUYERS"}</small><h2>{nl?"Voordat je een woning reserveert.":"Before you reserve a home."}</h2><div className="guidancePoints">{points.map(({icon:Icon,title,text})=><div key={title}><Icon size={21}/><div><h3>{title}</h3><p>{text}</p></div></div>)}</div></div>
- <aside><small>{nl?"JOUW CONTACTPERSONEN":"YOUR CONTACTS"}</small><h3>{nl?"Spreek ons rechtstreeks.":"Speak to us directly."}</h3><TeamContacts/></aside></section>
+ return <section className="guidance" id="om"><div><small className="eyeline">{tr("HOW WE HELP BUYERS")}</small><h2>{tr("Before you reserve a home.")}</h2><div className="guidancePoints">{points.map(({icon:Icon,title,text})=><div key={title}><Icon size={21}/><div><h3>{title}</h3><p>{text}</p></div></div>)}</div></div>
+ <aside><small>{tr("YOUR CONTACTS")}</small><h3>{tr("Speak to us directly.")}</h3><TeamContacts/></aside></section>
 }

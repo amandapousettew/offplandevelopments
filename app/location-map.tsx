@@ -23,7 +23,7 @@ export function LocationMap({matches,onOpen,fromPrice,bounds,onBounds,onClearAre
   import("leaflet").then(async module=>{
    if(disposed||!container.current)return;
    const L=module.default??module;
-   const map=L.map(container.current,{scrollWheelZoom:false,zoomSnap:0.25}).setView([39,-5],5);
+   const map=L.map(container.current,{scrollWheelZoom:false,zoomSnap:0.25,zoomControl:false}).setView([39,-5],5);
    mapRef.current={map,L};
    map.attributionControl.setPrefix(false);
    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
@@ -35,12 +35,18 @@ export function LocationMap({matches,onOpen,fromPrice,bounds,onBounds,onClearAre
  useEffect(()=>{
   if(!ready||!mapRef.current)return;
   const {map,L}=mapRef.current;
+  const zoom=L.control.zoom({zoomInTitle:tr("Zoom in"),zoomOutTitle:tr("Zoom out")}).addTo(map);
+  return ()=>{zoom.remove()};
+ },[ready,lang]);
+ useEffect(()=>{
+  if(!ready||!mapRef.current)return;
+  const {map,L}=mapRef.current;
   const markers=L.layerGroup().addTo(map);
   const items=projects.filter(p=>(JSON.parse(markerKey) as number[]).includes(p.id));
   const names=[...new Set(projects.map(p=>p.town))];
   for(const name of names){
    const count=items.filter(p=>p.town===name).length;
-   const marker=L.marker(areas[name].centre,{title:tr(name),alt:tr(name)+", "+count+(lang==="nl"?" projecten":" developments"),icon:L.divIcon({className:"townMarker"+(count?"":" mutedMarker"),html:count?String(count):"·",iconSize:[30,30],iconAnchor:[15,15]})}).addTo(markers);
+   const marker=L.marker(areas[name].centre,{title:tr(name),alt:tr(name)+", "+count+tr(" developments"),icon:L.divIcon({className:"townMarker"+(count?"":" mutedMarker"),html:count?String(count):"·",iconSize:[30,30],iconAnchor:[15,15]})}).addTo(markers);
    marker.bindTooltip(tr(name)).on("click",()=>{setPicked(name);map.setView(areas[name].centre,12)});
   }
   if(!bounds&&names.length)map.fitBounds(L.latLngBounds(names.map(n=>areas[n].centre)),{padding:[35,35],maxZoom:12,animate:false});
@@ -88,6 +94,6 @@ export function LocationMap({matches,onOpen,fromPrice,bounds,onBounds,onClearAre
   const area=[b.getSouth(),Math.max(-180,b.getWest()),b.getNorth(),Math.min(180,b.getEast())];
   if(validBounds(area)){setDraft(area as SearchBounds);setDrawing(false)}
  }
- return <section className="mapLayout" aria-label={tr("Development locations")}><div className="mapWorkspace"><div className="areaControls"><button className="filter" disabled={!ready} aria-pressed={drawing} onClick={()=>{setDraft(null);setHasCorner(false);setDrawing(!drawing)}}>{drawing?(lang==="nl"?"Annuleren":"Cancel"):(lang==="nl"?"Zoekgebied tekenen":"Draw search area")}</button><button className="textlink" disabled={!ready} onClick={useVisibleArea}>{lang==="nl"?"Zoek in dit kaartbeeld":"Search this map view"}</button>{draft&&<button className="filter" onClick={()=>{onBounds(draft);setDraft(null)}}>{lang==="nl"?"OK, zoek in dit gebied":"OK, search this area"}</button>}{(draft||bounds)&&<button className="textlink" onClick={()=>{setDraft(null);setDrawing(false);onClearArea()}}>{lang==="nl"?"Gebied wissen":"Clear area"}</button>}</div>
- <p className="fine mapStatus" role="status">{draft?(lang==="nl"?"Bevestig dit gebied om te zoeken.":"Confirm this area to search.") :drawing?(hasCorner?(lang==="nl"?"Tik op de tegenoverliggende hoek.":"Tap the opposite corner."):(lang==="nl"?"Tik op de eerste hoek van je zoekgebied.":"Tap the first corner of your search area.")):(lang==="nl"?"Verplaats of zoom de kaart, of teken een gebied.":"Move or zoom the map, or draw an area.")}</p><div className={"mapCanvas"+(drawing?" drawingArea":"")} ref={container} aria-label={tr("Map of development towns")}/></div><aside>{!matches.length?<div className="mapEmpty"><strong>{lang==="nl"?"Geen projecten in deze selectie":"No projects in this selection"}</strong><p>{lang==="nl"?"De stippen tonen waar we projecten hebben. Pas je gebied of filters aan.":"The dots show where we have projects. Adjust your area or filters."}</p>{bounds&&<button className="filter" onClick={onClearArea}>{lang==="nl"?"Alle locaties tonen":"Show all locations"}</button>}</div>:<><label htmlFor="town-choice">{tr("Explore a town")}</label><select id="town-choice" value={town||""} disabled={!town} onChange={e=>{setPicked(e.target.value);mapRef.current?.map.setView(areas[e.target.value].centre,12)}}>{towns.map(t=><option key={t} value={t}>{tr(t)}</option>)}</select><p className="fine">{tr("Pins mark town centres. Select a development for airport routes, public transport and beach access.")}</p>{matches.filter(p=>p.town===town).map(p=><button key={p.id} onClick={()=>onOpen(p)}><strong>{p.name}</strong><span>{fromPrice(p)===null?(lang==="nl"?"Geen aanbod":"None available"):tr("From")+" "+price(fromPrice(p)!)} {tr("· Area guide")}</span></button>)}</>}</aside></section>
+ return <section className="mapLayout" aria-label={tr("Development locations")}><div className="mapWorkspace"><div className="areaControls"><button className="filter" disabled={!ready} aria-pressed={drawing} onClick={()=>{setDraft(null);setHasCorner(false);setDrawing(!drawing)}}>{drawing?tr("Cancel"):tr("Draw search area")}</button><button className="textlink" disabled={!ready} onClick={useVisibleArea}>{tr("Search this map view")}</button>{draft&&<button className="filter" onClick={()=>{onBounds(draft);setDraft(null)}}>{tr("OK, search this area")}</button>}{(draft||bounds)&&<button className="textlink" onClick={()=>{setDraft(null);setDrawing(false);onClearArea()}}>{tr("Clear area")}</button>}</div>
+ <p className="fine mapStatus" role="status">{draft?tr("Confirm this area to search.") :drawing?(hasCorner?tr("Tap the opposite corner."):tr("Tap the first corner of your search area.")):tr("Move or zoom the map, or draw an area.")}</p><div className={"mapCanvas"+(drawing?" drawingArea":"")} ref={container} aria-label={tr("Map of development towns")}/></div><aside>{!matches.length?<div className="mapEmpty"><strong>{tr("No projects in this selection")}</strong><p>{tr("The dots show where we have projects. Adjust your area or filters.")}</p>{bounds&&<button className="filter" onClick={onClearArea}>{tr("Show all locations")}</button>}</div>:<><label htmlFor="town-choice">{tr("Explore a town")}</label><select id="town-choice" value={town||""} disabled={!town} onChange={e=>{setPicked(e.target.value);mapRef.current?.map.setView(areas[e.target.value].centre,12)}}>{towns.map(t=><option key={t} value={t}>{tr(t)}</option>)}</select><p className="fine">{tr("Pins mark town centres. Select a development for airport routes, public transport and beach access.")}</p>{matches.filter(p=>p.town===town).map(p=><button key={p.id} onClick={()=>onOpen(p)}><strong>{p.name}</strong><span>{fromPrice(p)===null?tr("Price on request"):tr("From")+" "+price(fromPrice(p)!)} {tr("· Area guide")}</span></button>)}</>}</aside></section>
 }

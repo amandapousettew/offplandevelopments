@@ -14,12 +14,12 @@ export function pauseSearchHelp(days:number) {
 }
 
 const wishes=[
-  {en:"Sea view",nl:"Zeezicht",image:".//wishes/sea.jpg"},
-  {en:"Balcony",nl:"Balkon",image:".//images/4.jpg"},
-  {en:"Garden",nl:"Tuin",image:".//images/2.jpg"},
-  {en:"Near the beach",nl:"Dicht bij het strand",image:".//wishes/beach.jpg"},
-  {en:"Swimming pool",nl:"Zwembad",image:".//images/1.jpg"},
-  {en:"Open-plan living",nl:"Open leefruimte",image:".//images/9.jpg"}
+  {en:"Sea view",image:"wishes/sea.jpg"},
+  {en:"Balcony",image:"images/4.jpg"},
+  {en:"Garden",image:"images/2.jpg"},
+  {en:"Near the beach",image:"wishes/beach.jpg"},
+  {en:"Swimming pool",image:"images/1.jpg"},
+  {en:"Open-plan living",image:"images/9.jpg"}
 ];
 type Props = {
   projectOpen:boolean;
@@ -29,8 +29,7 @@ type Props = {
 };
 
 export function SearchHelp({projectOpen,formOpen,completed,onRequest}:Props) {
-  const {lang}=useLanguage();
-  const nl=lang==="nl";
+  const {tr,basePath}=useLanguage();
   const [catalogueVisible,setCatalogueVisible]=useState(false);
   const [visibleTab,setVisibleTab]=useState(false);
   const [ready,setReady]=useState(false);
@@ -79,17 +78,17 @@ export function SearchHelp({projectOpen,formOpen,completed,onRequest}:Props) {
   const host=projectOpen?document.querySelector("dialog.caseDialog"):document.body;
   if(!host)return null;
   function dismiss(){setDismissed(true);pauseSearchHelp(7)}
-  return createPortal(<aside className="searchHelp" aria-label={nl?"Hulp bij het zoeken":"Home search help"}>
-    <button className="helpClose" onClick={dismiss} aria-label={nl?"Sluiten":"Dismiss"}><X size={17}/></button>
-    <h3>{nl?"Je ideale woning nog niet gevonden?":"Haven’t found the right home?"}</h3>
-    <p>{nl?"Kies wat je in je nieuwe woning wilt.":"Pick what you’d love in your new home."}</p>
+  return createPortal(<aside className="searchHelp" aria-label={tr("Home search help")}>
+    <button className="helpClose" onClick={dismiss} aria-label={tr("Dismiss")}><X size={17}/></button>
+    <h3>{tr("Haven’t found the right home?")}</h3>
+    <p>{tr("Pick what you’d love in your new home.")}</p>
     <div className="wishTiles">{wishes.map(w=>{
       const selected=picked.includes(w.en);
       return <button type="button" className="wishTile" key={w.en} aria-pressed={selected}
         onClick={()=>setPicked(previous=>previous.includes(w.en)?previous.filter(id=>id!==w.en):[...previous,w.en])}>
-        <img src={w.image} alt=""/><span>{nl?w.nl:w.en}</span><i aria-hidden="true">{selected?<Check size={14}/>:<Plus size={14}/>}</i>
+        <img src={basePath+w.image} alt=""/><span>{tr(w.en)}</span><i aria-hidden="true">{selected?<Check size={14}/>:<Plus size={14}/>}</i>
       </button>
     })}</div>
-    <button className="pill dark" onClick={()=>{dismiss();onRequest(wishes.filter(w=>picked.includes(w.en)).map(w=>nl?w.nl:w.en))}}>{nl?"Deel mijn woonwensen":"Share my wish list"}{picked.length>0&&" ("+picked.length+")"}</button>
+    <button className="pill dark" onClick={()=>{dismiss();onRequest(wishes.filter(w=>picked.includes(w.en)).map(w=>tr(w.en)))}}>{tr("Share my wish list")}{picked.length>0&&" ("+picked.length+")"}</button>
   </aside>,host);
 }

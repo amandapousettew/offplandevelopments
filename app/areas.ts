@@ -1,3 +1,4 @@
+import type {Language} from "./lang";
 export type Point = [number, number];
 type Airport = {name: string; point: Point; guide: string};
 const airports: Record<string,Airport> = {
@@ -33,11 +34,11 @@ export function searchArea(query:string,town:string,region:string,country:string
  return terms.every(term=>area.includes(term));
 }
 export function localGuide(town:string){const area=areas[town];return {...area,hub:airports[area.airport]}}
-export function distance(a:Point,b:Point,lang:"en"|"nl"){
+export function distance(a:Point,b:Point,lang:Language){
  const rad=Math.PI/180;
  const h=Math.sin((b[0]-a[0])*rad/2)**2+Math.cos(a[0]*rad)*Math.cos(b[0]*rad)*Math.sin((b[1]-a[1])*rad/2)**2;
  const km=12742*Math.asin(Math.sqrt(h));
- const prefix=lang==="nl"?"circa ":"about ";
+ const prefix={nl:"circa ",en:"about ",sv:"cirka "}[lang];
  return km<1?prefix+Math.max(100,Math.round(km*10)*100)+" m":prefix+(km<10?km.toLocaleString(lang,{minimumFractionDigits:1,maximumFractionDigits:1}):Math.round(km))+" km";
 }
 export function directions(from:Point,to:Point,mode:string){

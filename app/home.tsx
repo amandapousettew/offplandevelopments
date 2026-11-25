@@ -38,6 +38,7 @@ function Form({kind,project,initialMessage,onSuccess,review}:{review?:boolean,ki
 export default function Home({stock,review=false}:{stock:Workspace["stock"];review?:boolean}){
  const {tr,lang,setLang,price}=useLanguage();
  const [country,setCountry]=useState("All"),[limit,setLimit]=useState(6),[slide,setSlide]=useState(0),[filters,setFilters]=useState(false),[type,setType]=useState("All"),[budget,setBudget]=useState("All"),[savedOnly,setSavedOnly]=useState(false),[saved,setSaved]=useState<number[]>([]),[menu,setMenu]=useState(false),[detail,setDetail]=useState<Project|null>(null),[kind,setKind]=useState(""),[selected,setSelected]=useState(""),[tab,setTab]=useState("Overview");
+ const menuButton=useRef<HTMLButtonElement>(null);
  const [amenities,setAmenities]=useState<string[]>([]);
  const [catalogue,setCatalogue]=useState<"homes"|"investments">("homes");
  const [rental,setRental]=useState("All");
@@ -100,7 +101,45 @@ export default function Home({stock,review=false}:{stock:Workspace["stock"];revi
   setType("All");
   setLimit(6);
  };
- return <><header><Brand/><nav aria-label={lang==="nl"?"Hoofdnavigatie":"Main navigation"} className={menu?"open":""}><a href="#projekt" onClick={()=>setMenu(false)}>{tr("Developments")}</a><a href={agencyPage} onClick={()=>setMenu(false)}>{lang==="nl"?"Voor makelaars":"For estate agents"}</a><a href="#om" onClick={()=>setMenu(false)}>{tr("About us")}</a>{!review&&<a href="/partners">{lang==="nl"?"Partnerlogin":"Partner login"}</a>}<button className="savedMobile" onClick={showSaved}>{tr("Saved developments")}</button><div className="mobileMenuTools"><BookingLink/><label>{lang==="nl"?"Taal":"Language"}<select aria-label="Menu language" value={lang} onChange={e=>setLang(e.target.value==="nl"?"nl":"en")}><option value="en">English</option><option value="nl">Nederlands</option></select></label><button className="pill dark" onClick={()=>openForm("Buyer")}>{tr("Get in touch")}</button></div></nav><div className="actions"><select className="languageSelect" aria-label="Language / Taal" value={lang} onChange={e=>setLang(e.target.value==="nl"?"nl":"en")}><option value="en" lang="en">English</option><option value="nl" lang="nl">Nederlands</option></select><button className="saveNav" aria-label={tr("View saved developments")} onClick={showSaved}><Bookmark size={18}/><span>{tr("Saved")}{saved.length?" ("+saved.length+")":""}</span></button><BookingLink/><button aria-label={tr("Menu")} aria-expanded={menu} className="mobile" onClick={()=>setMenu(!menu)}><span>{menu?(lang==="nl"?"Sluiten":"Close"):"Menu"}</span>{menu?<X size={20}/>:<Menu size={20}/>}</button></div></header>
+ return <>
+ <header className="siteHeader" onKeyDown={event=>{
+  if(event.key==="Escape"&&menu){
+   setMenu(false);
+   menuButton.current?.focus();
+  }
+ }}>
+  <Brand/>
+  <nav id="site-navigation" aria-label={lang==="nl"?"Hoofdnavigatie":"Main navigation"} className={menu?"open":""}>
+   <a href="#projekt" onClick={()=>setMenu(false)}>{tr("Developments")}</a>
+   <a href={agencyPage} onClick={()=>setMenu(false)}>{lang==="nl"?"Voor makelaars":"For estate agents"}</a>
+   <a href="#om" onClick={()=>setMenu(false)}>{tr("About us")}</a>
+   {!review&&<a href="/partners">{lang==="nl"?"Partnerlogin":"Partner login"}</a>}
+   <button type="button" className="savedMobile" onClick={showSaved}>{tr("Saved developments")}</button>
+   <div className="mobileMenuTools">
+    <BookingLink className="pill dark menuBooking"/>
+    <label>{lang==="nl"?"Taal":"Language"}
+     <select value={lang} onChange={event=>setLang(event.target.value==="nl"?"nl":"en")}>
+      <option value="en" lang="en">English</option>
+      <option value="nl" lang="nl">Nederlands</option>
+     </select>
+    </label>
+    <button type="button" className="pill dark" onClick={()=>openForm("Buyer")}>{tr("Get in touch")}</button>
+   </div>
+  </nav>
+  <div className="actions">
+   <select className="languageSelect" aria-label="Language / Taal" value={lang} onChange={event=>setLang(event.target.value==="nl"?"nl":"en")}>
+    <option value="en" lang="en">English</option>
+    <option value="nl" lang="nl">Nederlands</option>
+   </select>
+   <button type="button" className="saveNav" aria-label={tr("View saved developments")} onClick={showSaved}>
+    <Bookmark size={18}/><span>{tr("Saved")}{saved.length?" ("+saved.length+")":""}</span>
+   </button>
+   <BookingLink className="pill dark headerBooking"/>
+   <button ref={menuButton} type="button" className="mobile" aria-expanded={menu} aria-controls="site-navigation" onClick={()=>setMenu(open=>!open)}>
+    <span>{menu?(lang==="nl"?"Sluiten":"Close"):tr("Menu")}</span>{menu?<X size={20}/>:<Menu size={20}/>}
+   </button>
+  </div>
+ </header>
  <main><section className="hero" style={{backgroundImage:"linear-gradient(90deg,rgba(23,23,23,.68),rgba(28,28,28,.17) 78%),linear-gradient(0deg,rgba(26,26,26,.43),transparent 28%),url(./project-images/"+hero.image+".webp)"}}>
  <div className="heroText">
   <small className="heroEyebrow" lang={lang}><i aria-hidden="true"/>{lang==="nl"?"Nieuwbouw in Spanje":"New developments in Spain"}</small>

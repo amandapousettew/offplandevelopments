@@ -10,8 +10,7 @@ h1{letter-spacing:-.025em}.sectionHead h2,.partner h2,.about h2,.modal h2,.proje
 
 .hero .holidayHeading{font-size:clamp(46px,5.6vw,88px);max-width:22ch;line-height:1.04}.holidayHeading em{display:block}.buyerFaq{padding:clamp(40px,6vw,84px) clamp(22px,5.3vw,96px);display:grid;grid-template-columns:1fr 1.5fr;gap:7%;border-bottom:1px solid var(--line)}.buyerFaq h2{font-size:clamp(36px,3.8vw,60px);letter-spacing:-.012em;line-height:1.07;max-width:12ch}.buyerFaq details{border-bottom:1px solid var(--line)}.buyerFaq details:first-child{border-top:1px solid var(--line)}.buyerFaq summary{cursor:pointer;list-style:none;padding:17px 2px;display:flex;align-items:center;justify-content:space-between;gap:14px;line-height:1.45;font-weight:600}.buyerFaq summary::-webkit-details-marker{display:none}.buyerFaq summary:after{content:"+";font:24px/1 Georgia}.buyerFaq details[open] summary:after{content:"−"}.buyerFaq p{margin:0 30px 18px 2px;line-height:1.6;max-width:62ch}.buyerFaq summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}@media(max-width:680px){.hero .holidayHeading{font-size:clamp(34px,7.9vw,54px);max-width:100%}.buyerFaq{grid-template-columns:1fr;gap:24px}.buyerFaq h2{max-width:none}}
 header .brand,footer .brand{font-size:clamp(23px,2.1vw,32px);letter-spacing:-.055em}header .brand svg{width:26px;margin-right:6px}
-@media(min-width:681px) and (max-width:1080px){body>header{height:auto;min-height:84px;flex-wrap:wrap;gap:6px 12px;padding-block:10px}body>header nav{order:3;flex:0 0 100%;justify-content:center;gap:22px}}
-@media(max-width:680px){body>header{display:grid;grid-template-columns:1fr auto;height:auto;min-height:78px;gap:4px;padding-block:8px}body>header .brand{grid-column:1/-1}body>header .actions{grid-column:1/-1;justify-content:space-between}nav.open{top:100%}.portal header{flex-wrap:wrap;height:auto;padding-block:12px}}
+@media(max-width:680px){.portal header{flex-wrap:wrap;height:auto;padding-block:12px}}
 .heroText>p{max-width:45ch}.hero .holidayHeading{font-family:Arial,Helvetica,sans-serif;font-weight:600;letter-spacing:-.03em}.holidayHeading em{font-style:normal;font-weight:400}.heroText .pill.light{background:#ececec;color:#333333}.budgetChoice{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:.875rem;font-weight:600}.budgetChoice select{width:auto;padding:10px 24px 10px 10px;border-color:#b3b3b3}.cardFoot strong{font-size:1.04rem;color:#4a4a4a}.cardFoot{align-items:baseline}.cardFoot strong:only-child{margin-left:auto}@media(max-width:680px){.locationBar{flex-wrap:wrap;justify-content:space-between}.locationSearch{flex:1 0 100%}.budgetChoice select{padding:9px 5px}}
 
 :root{accent-color:#363636}
@@ -34,19 +33,30 @@ header .brand,footer .brand{font-size:clamp(23px,2.1vw,32px);letter-spacing:-.05
 }
 
 .mobileMenuTools{display:none}
-@media(max-width:680px){
-#root>header,body>header{display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;position:relative;min-height:72px;height:auto;padding:14px 16px;gap:10px;border-bottom:1px solid var(--line)}
-#root>header .brand,body>header .brand{width:auto;min-width:0;font-size:clamp(19px,5.2vw,25px);letter-spacing:-.8px;gap:0}
-#root>header .brand svg,body>header .brand svg{width:22px;flex-shrink:0;margin-right:6px}
-#root>header .actions,body>header .actions{width:auto;gap:0;flex:0 0 auto}
-header .actions>.languageSelect,header .actions>.pill,header .actions>.saveNav{display:none}
-header .actions>.mobile{display:flex;align-items:center;gap:6px;min-height:44px;padding:0 8px;font-size:.8rem}
-header nav.open,#root>header nav.open{position:absolute;top:100%;left:0;right:0;z-index:1000;display:flex;align-items:stretch;flex-direction:column;gap:0;margin:0;padding:12px 20px 20px;background:var(--paper);border-bottom:1px solid var(--line);box-shadow:0 10px 20px #0001}
-header nav.open>a,header nav.open .savedMobile{text-align:left;padding:14px 0;border-bottom:1px solid var(--line);font-size:1rem;min-height:48px}
-header nav.open .mobileMenuTools{display:grid;gap:16px;padding-top:18px}
+.siteHeader>.brand,.siteHeader>.actions{flex:none}
+.siteHeader>nav>a,.siteHeader .headerBooking{white-space:nowrap}
+.siteHeader .headerBooking svg{flex:none}
+@media(max-width:1240px){
+.siteHeader{position:relative;z-index:25}
+.siteHeader>nav,.siteHeader .actions>.languageSelect,.siteHeader .actions>.saveNav{display:none}
+.siteHeader .actions{gap:12px}
+.siteHeader .actions>.mobile{display:flex;align-items:center;gap:6px;min-height:44px;padding:0 8px;font-size:.875rem}
+.siteHeader>nav.open{position:absolute;top:100%;left:auto;right:clamp(22px,5.3vw,96px);z-index:1000;display:flex;align-items:stretch;flex-direction:column;gap:0;width:min(340px,calc(100vw - 32px));max-height:calc(100dvh - 88px);overflow:auto;margin:0;padding:12px 20px 20px;background:var(--paper);border:1px solid var(--line);border-radius:0 0 10px 10px;box-shadow:0 10px 20px #0001}
+.siteHeader>nav.open>a,.siteHeader>nav.open .savedMobile{display:block;text-align:left;padding:14px 0;border-bottom:1px solid var(--line);font-size:1rem;min-height:48px}
+.siteHeader>nav.open .mobileMenuTools{display:grid;gap:16px;padding-top:18px}
+.siteHeader .mobileMenuTools>.menuBooking{display:none}
 .mobileMenuTools label{display:flex;align-items:center;justify-content:space-between;font-size:.9rem}
 .mobileMenuTools select{width:auto;margin:0;padding:8px 12px}
 .mobileMenuTools .pill{width:100%;font-size:1rem}
+}
+@media(max-width:680px){
+.siteHeader{display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;min-height:72px;height:auto;padding:14px 16px;gap:10px;border-bottom:1px solid var(--line)}
+.siteHeader>.brand{flex:0 1 auto;min-width:0}
+.siteHeader .actions{gap:0}
+.siteHeader .actions>.headerBooking{display:none}
+.siteHeader .actions>.mobile{font-size:.8rem}
+.siteHeader>nav.open{left:0;right:0;width:auto;border-inline:0;border-radius:0}
+.siteHeader .mobileMenuTools>.menuBooking{display:inline-flex}
 }
 
 .mapHeading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--line);border-radius:8px;margin-bottom:12px;font-size:.9rem}.mapHeading button{min-height:44px;white-space:nowrap}.amenityFilters{border:0;padding:0;margin:0;display:flex;gap:10px 18px;flex-wrap:wrap;flex:1 1 300px}.amenityFilters legend{font-size:.9rem;font-weight:600;margin-bottom:10px}.amenityFilters label{display:flex;align-items:center;gap:7px;min-height:40px;font-size:.9rem}.amenityFilters input{width:18px;height:18px;margin:0;accent-color:var(--ink)}.filterPanel{align-items:flex-start;gap:20px;flex-wrap:wrap}.filterNote{flex:0 0 100%;margin:0}.filterPanel>label{min-width:180px}

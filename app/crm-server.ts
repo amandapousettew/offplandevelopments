@@ -1,6 +1,7 @@
 import {asc,desc,eq} from "drizzle-orm";
 import {getDb} from "../db";
 import {crmAccess,referrals,unitEvents,importedUnits,inventorySources} from "../db/schema";
+import {projects} from "./catalog";
 import {units,unitStates,type UnitState} from "./units";
 import type {ChatGPTUser} from "./chatgpt-auth";
 
@@ -17,7 +18,7 @@ export async function inventory(){
  const latest=new Map(history.map(e=>[e.unit,e]));
  const importedDates=new Map(imported.map(r=>[r.code,r.updated]));
  const liveProjects=new Set(imported.map(r=>r.project));
- const base=[...units.filter(u=>!liveProjects.has(u.project)),...imported.map(r=>({code:r.code,project:r.project,name:units.find(u=>u.project===r.project)!.name,price:r.price,area:null,status:"Available" as UnitState,version:0}))];
+ const base=[...units.filter(u=>!liveProjects.has(u.project)),...imported.map(r=>({code:r.code,project:r.project,name:projects.find(p=>p.code===r.project)?.name??units.find(u=>u.project===r.project)?.name??r.project,price:r.price,area:null,status:"Available" as UnitState,version:0}))];
  return base.map(u=>{const e=latest.get(u.code);return {...u,status:e?e.status as UnitState:u.status,version:e?.version??0,illustrative:!liveProjects.has(u.project),importDate:importedDates.get(u.code)??null}});
 }
 export async function workspace(user:ChatGPTUser,role:string){

@@ -1,6 +1,7 @@
 export type Point = [number, number];
 type Airport = {name: string; point: Point; guide: string};
 const airports: Record<string,Airport> = {
+ VLC:{name:"Valencia (VLC)",point:[39.489,-0.482],guide:"https://www.aena.es/en/valencia/how-to-get-there.html"},
  ALC:{name:"Alicante–Elche (ALC)",point:[38.288,-0.558],guide:"https://www.aena.es/en/alicante-elche-miguel-hernandez/how-to-get-there/bus.html"},
  FAO:{name:"Faro (FAO)",point:[37.019,-7.967],guide:"https://www.faroairport.pt/en/fao/access-parking/getting-to-and-from-the-airport/public-transportation"},
  LIS:{name:"Lisbon (LIS)",point:[38.768,-9.129],guide:"https://www.lisbonairport.pt/en/lis/access-parking/getting-to-and-from-the-airport/public-transportation"},
@@ -8,6 +9,11 @@ const airports: Record<string,Airport> = {
 };
 type Area={centre:Point;airport:string;beach:string;shore:Point;transit:string;operator:string;beachAccess?:string;aliases?:string};
 export const areas: Record<string,Area> = {
+ Benidorm:{centre:[38.541,-0.122],airport:"ALC",beach:"Playa de Poniente",shore:[38.534,-0.142],transit:"Check airport coach services to Benidorm and the local bus or taxi connection to the development.",operator:"https://www.alsa.com/en/web/bus/home"},
+ Finestrat:{centre:[38.566,-0.212],airport:"ALC",beach:"Cala de Finestrat",shore:[38.525,-0.166],transit:"Inland Finestrat, Sierra Cortina and Cala de Finestrat are different locations. Check local bus stops and road connections for the specific project.",operator:"https://www.finestrat.org/"},
+ Polop:{centre:[38.621,-0.13],airport:"ALC",beach:"Playa de l’Albir",shore:[38.571,-0.067],transit:"Polop is inland. Check onward local transport from Benidorm and the route to the selected villa.",operator:"https://www.polop.org/"},
+ Valencia:{centre:[39.469,-0.376],airport:"VLC",beach:"Playa de la Malvarrosa",shore:[39.477,-0.323],transit:"Use Metrovalencia’s official journey planner for airport and city connections, then check the stop nearest the development.",operator:"https://www.metrovalencia.es/en/"},
+ Xirivella:{centre:[39.466,-0.427],airport:"VLC",beach:"Playa de la Malvarrosa",shore:[39.477,-0.323],transit:"Check local bus connections to Valencia and onward airport or beach routes from the exact project address.",operator:"https://www.xirivella.es/"},
  Altea:{centre:[38.598,-0.052],airport:"ALC",beach:"Platja de l’Espigó",shore:[38.601,-0.044],transit:"Altea is on the coastal TRAM line between Benidorm and Dénia. Airport coaches serve Benidorm; allow for a transfer between stops.",operator:"https://www.tramalacant.es/en/"},
  Lagos:{centre:[37.102,-8.674],airport:"FAO",beach:"Praia da Batata",shore:[37.097,-8.669],transit:"Take a bus between the airport and central Faro, then use the Algarve railway between Faro and Lagos.",operator:"https://www.cp.pt/info/en/w/institucional/the-algarve-line"},
  "Jávea":{centre:[38.789,0.163],airport:"ALC",beach:"Platja de l’Arenal",shore:[38.773,0.19],aliases:"Xàbia Javea",transit:"Look up regional coaches under Xàbia, the local name for Jávea. Check the connection to the airport separately when planning your return.",operator:"https://www.alsa.com/en/web/bus/home"},
@@ -22,7 +28,7 @@ export const areas: Record<string,Area> = {
 };
 export function normalize(value:string){return value.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim()}
 export function searchArea(query:string,town:string,region:string,country:string){
- const terms=normalize(query).replace(/spanje/g,"spain").replace(/lissabon/g,"lisbon").replace(/regio/g,"region").split(/\s+/);
+ const terms=normalize(query).replace(/spanje|spanien/g,"spain").replace(/lissabon/g,"lisbon").replace(/regio/g,"region").split(/\s+/);
  const area=normalize([town,region,country,areas[town].aliases||""].join(" "));
  return terms.every(term=>area.includes(term));
 }

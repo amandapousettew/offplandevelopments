@@ -1,9 +1,10 @@
 import {env} from "cloudflare:workers";
 import {getChatGPTUser} from "../../chatgpt-auth";
 import {roleOf} from "../../crm-server";
+import {projects} from "../../catalog";
 import {units,unitStates} from "../../units";
 import {z} from "zod";
-const payload=z.object({project:z.string().refine(p=>units.some(u=>u.project===p)),file:z.string().min(1).max(255),rows:z.array(z.object({
+const payload=z.object({project:z.string().refine(p=>units.some(u=>u.project===p)||projects.some(project=>project.code===p)),file:z.string().min(1).max(255),rows:z.array(z.object({
  ref:z.string().regex(/^[A-Z0-9][A-Z0-9 ._/-]{0,59}$/),price:z.number().int().positive().max(999999999),
  status:z.enum(unitStates),version:z.number().int().min(0)
 })).min(1).max(200)});

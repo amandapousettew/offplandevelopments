@@ -2,13 +2,14 @@ import {eq,and} from "drizzle-orm";
 import {z} from "zod";
 import {getChatGPTUser} from "../../chatgpt-auth";
 import {roleOf,inventory} from "../../crm-server";
+import {projects} from "../../catalog";
 import {units,unitStates} from "../../units";
 import {getDb} from "../../../db";
 import {crmAccess,referrals,unitEvents,inventorySources} from "../../../db/schema";
 const email=z.string().trim().email().max(254).transform(v=>v.toLowerCase());
 const code=z.string().max(85);
 const command=z.discriminatedUnion("action",[
- z.object({action:z.literal("source"),project:z.string().refine(p=>units.some(u=>u.project===p)),url:z.string().url().refine(u=>/^https:\/\/(docs|drive)\.google\.com\//.test(u))}),
+ z.object({action:z.literal("source"),project:z.string().refine(p=>units.some(u=>u.project===p)||projects.some(project=>project.code===p)),url:z.string().url().refine(u=>/^https:\/\/(docs|drive)\.google\.com\//.test(u))}),
  z.object({action:z.literal("refer"),id:z.string().uuid(),unit:code,buyer:z.string().trim().min(1).max(150),email}),
  z.object({action:z.literal("invite"),email,role:z.enum(["admin","agent"])}),
  z.object({action:z.literal("remove"),email}),

@@ -106,3 +106,7 @@ header .brand img{transform:none;width:235px;height:65px}
 header:has(.brand img){min-height:85px;padding-block:10px}
 footer .brand img{width:235px;height:65px}
 @media(max-width:680px){#root>header:has(.brand img),body>header:has(.brand img){min-height:76px;padding-block:10px}header .brand img,footer .brand img{width:200px;height:auto}}
+
+.sourcePlan{display:block;width:100%;height:auto;max-height:600px;object-fit:contain;background:white}.projectPageLink{display:inline-block;margin-bottom:12px;font-size:.875rem}.cardFacts span{white-space:normal}.cardFacts span svg{flex-shrink:0}.projectNamePrice strong{max-width:43%;white-space:normal;text-align:right}.cardFacts{align-items:flex-start}
+
+.priceTaxNote{display:block;font-size:.68rem;font-weight:400;line-height:1.4;margin-top:4px}

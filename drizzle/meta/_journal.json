@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1795537185593,
+      "tag": "0000_cloudy_snowbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1795538333897,
+      "tag": "0001_eager_scarlet_spider",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1795538599655,
+      "tag": "0002_small_lila_cheney",
+      "breakpoints": true
+    }
+  ]
+}

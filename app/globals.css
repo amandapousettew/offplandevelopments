@@ -95,3 +95,14 @@ header nav.open .mobileMenuTools{display:grid;gap:16px;padding-top:18px}
 header .brand img,footer .brand img{display:block;width:216px;height:84px;max-width:100%;object-fit:contain}
 header:has(.brand img){min-height:88px;height:auto}
 @media(max-width:680px){#root>header:has(.brand img),body>header:has(.brand img){min-height:76px;padding-block:0}header .brand img,footer .brand img{width:200px;height:78px}}
+
+header .brand img{transform:translateY(5px)}
+.bookingContact{border-top:1px solid var(--line);padding-top:18px}
+.bookingContact .pill,.actions>a.pill,.mobileMenuTools>a.pill{gap:8px}
+.bookingContact p{font-size:.8rem;margin:8px 0 0}
+@media(max-width:680px){header .actions>a.pill{display:none}.bookingContact .pill{font-size:.875rem;padding-inline:16px;text-align:center}}
+
+header .brand img{transform:none;width:235px;height:65px}
+header:has(.brand img){min-height:85px;padding-block:10px}
+footer .brand img{width:235px;height:65px}
+@media(max-width:680px){#root>header:has(.brand img),body>header:has(.brand img){min-height:76px;padding-block:10px}header .brand img,footer .brand img{width:200px;height:auto}}

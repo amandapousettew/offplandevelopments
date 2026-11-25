@@ -64,14 +64,11 @@ header .brand,footer .brand{font-size:clamp(23px,2.1vw,32px);letter-spacing:-.05
 .heroText .heroEyebrow{text-transform:uppercase;line-height:1.5}
 .heroEyebrow i{flex:0 0 22px}
 .hero .holidayHeading>span{display:block;font-weight:700}
-.heroLinks{display:flex;align-items:center;flex-wrap:wrap;gap:10px 20px}
-.heroAgentLink{font-size:.9rem;font-weight:600;text-decoration:underline;text-underline-offset:4px;padding-block:10px}
 .catalogueViews{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
 .catalogueViews button{border:1px solid #bbb;border-radius:30px;min-height:42px;padding:7px 16px;font-size:.875rem}
 .catalogueViews button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
 .catalogueNote{font-size:.9rem;line-height:1.5;margin:0 0 18px}
 .projectCardLink{display:inline-block;margin-top:12px;font-size:.875rem}
-.projectContactLinks{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px}
 .whatsappButton{display:inline-flex;align-items:center;gap:9px;border-radius:30px;padding:10px 16px;min-height:46px;background:#08783e;color:#fff;font-size:.9rem;font-weight:700;text-decoration:none}
 .whatsappButton img{width:21px;height:21px;flex:none}
 .whatsappFloating{position:fixed;right:clamp(14px,2vw,30px);bottom:max(14px,env(safe-area-inset-bottom));z-index:20;box-shadow:0 3px 15px #0003}
@@ -87,9 +84,7 @@ header .brand,footer .brand{font-size:clamp(23px,2.1vw,32px);letter-spacing:-.05
 .hero .holidayHeading>span{overflow-wrap:break-word;text-wrap:balance;max-width:16ch}
 .hero .holidayHeading em{margin-top:3px}
 .hero .heroText>p{font-size:1rem;line-height:1.45;max-width:31ch;margin:0 0 17px}
-.heroLinks{gap:2px 14px}
 .heroText .pill{min-height:46px;padding:10px 17px;font-size:.875rem}
-.heroAgentLink{font-size:.8125rem}
 .whatsappFloating{padding-inline:12px;font-size:.8125rem}
 .heroFoot{left:24px;right:24px;bottom:22px;align-items:flex-end;gap:12px}
 .heroFoot .location{font-size:.8rem;line-height:1.4;text-align:left;gap:5px;max-width:220px}
@@ -142,3 +137,18 @@ footer .brand img{width:235px;height:65px}
 .sourcePlan{display:block;width:100%;height:auto;max-height:600px;object-fit:contain;background:white}.projectPageLink{display:inline-block;margin-bottom:12px;font-size:.875rem}.cardFacts span{white-space:normal}.cardFacts span svg{flex-shrink:0}.projectNamePrice strong{max-width:43%;white-space:normal;text-align:right}.cardFacts{align-items:flex-start}
 
 .priceTaxNote{display:block;font-size:.68rem;font-weight:400;line-height:1.4;margin-top:4px}
+
+.projectEnquiry h3{margin:0 0 14px;font-size:clamp(22px,3vw,29px);line-height:1.2}
+.enquiryActions{display:flex;flex-wrap:wrap;gap:10px}
+.shortlistButton{display:inline-flex;align-items:center;gap:7px;border:1px solid #a9a9a9}
+.catalogueViews .shortlistButton{margin-left:auto}
+.shortlistAction{padding:0 0 18px}
+.enquirySelection{border:1px solid var(--line);border-radius:8px;padding:3px 14px 8px;margin:16px 0}
+.enquirySelection legend{font-size:.9rem;font-weight:600}
+.enquirySelectionItem{padding:10px 0;overflow-wrap:anywhere}
+.enquirySelectionItem + .enquirySelectionItem{border-top:1px solid var(--line)}
+.formInside .enquirySelectionItem label{display:flex;align-items:center;gap:8px;margin:0;cursor:pointer}
+.enquirySelectionItem input{width:17px;height:17px;flex:none;margin:0;accent-color:var(--ink)}
+.enquiryPreferences{padding-left:18px;margin:6px 0 0;color:#555;font-size:.875rem;line-height:1.45}
+.enquiryPreferences li{white-space:pre-wrap}
+@media(max-width:680px){.catalogueViews .shortlistButton{margin-left:0}}

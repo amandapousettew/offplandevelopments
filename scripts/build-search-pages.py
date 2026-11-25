@@ -41,30 +41,20 @@ def link(url, text, class_name=""):
     return f'<a href="{escape(url, quote=True)}"{css}>{escape(text)}</a>'
 
 
-def whatsapp(lang, project=None, floating=False):
+def whatsapp(lang):
     person = contact_for(lang)
-    templates = {
-        "en": "Hi, I'd like more information about {}.",
-        "sv": "Hej! Jag vill gärna veta mer om {}.",
-        "nl": "Hoi, ik wil graag meer informatie over {}.",
-    }
-    url = "https://wa.me/" + person["number"][1:]
-    if project:
-        url += "?" + urlencode({"text": templates[lang].format(project["name"])})
-    css = "whatsapp" + (" floating-whatsapp" if floating else "")
     name = "WhatsApp " + person["name"]
-    return (f'<a class="{css}" href="{escape(url, quote=True)}" aria-label="{escape(name)}" '
+    url = "https://wa.me/" + person["number"][1:]
+    return (f'<a class="whatsapp floating-whatsapp" href="{url}" aria-label="{escape(name)}" '
             f'target="_blank" rel="noopener noreferrer"><img src="{path_to("whatsapp.svg")}" '
             'width="20" height="20" alt=""><span>WhatsApp</span></a>')
-
 
 def contacts(lang):
     primary = contact_for(lang)
     team = [primary] + [person for person in CONFIG["team"].values() if person != primary]
     rows = ''.join(
         f'<div><strong>{escape(person["name"])}</strong><br>{escape(" · ".join(person["languages"]))}<br>'
-        f'{link("tel:" + person["number"], person["display"])} · '
-        f'{link("https://wa.me/" + person["number"][1:], "WhatsApp")}</div>'
+        f'{link("tel:" + person["number"], person["display"])}</div>'
         for person in team
     )
     return f'<div class="contacts">{rows}</div>'
@@ -132,7 +122,7 @@ def page(path, lang, title, description, body, alternates, project=None):
    <p>{link(path_to(), "OffplanDevelopments")}</p>
   </div>
  </footer>
- {whatsapp(lang, project, floating=True)}
+ {whatsapp(lang)}
 </body>
 </html>
 """
@@ -350,9 +340,9 @@ def build_project(project, lang):
     title = text.get("title", f'{project["name"]} | New development in {project["town"]}')
     path = project_path(project, lang)
     actions = link("#enquiry", request, "button")
-    if residential:
-        share = "mailto:?" + urlencode({"subject": project["name"], "body": BASE + path})
-        actions += link(share, labels["share"], "secondary-link")
+    saved_link = path_to("?" + urlencode({"save": project["slug"], "saved": 1, "lang": "nl" if lang == "nl" else "en"}) + "#projekt")
+    shortlist_label = {"en": "Save to shortlist", "sv": "Spara bland favoriter", "nl": "Bewaar bij favorieten"}
+    actions += link(saved_link, shortlist_label[lang], "secondary-link")
     body = intro(project["name"], text["description"], project["town"] + " · " + project["region"], f'<div class="section-links">{actions}</div>')
     body += (f'<img class="project-photo" src="{path_to("project-images/" + project["image"] + ".webp")}" '
              f'alt="{escape(project["name"])}" fetchpriority="high">')
@@ -369,7 +359,11 @@ def build_project(project, lang):
         plan = path_to("project-plans/" + project["plan"] + ".png")
         body += section(labels["plan"], f'<a href="{plan}"><img class="floor-plan" loading="lazy" src="{plan}" alt="{escape(labels["plan"] + ": " + project["name"])}"></a>')
     body += travel_section(project, lang)
-    body += section(request, (paragraph(labels["role"]) if residential else "") + enquiry_form(lang, project=project), "enquiry")
+    enquiry_intro = ""
+    if residential:
+        share = "mailto:?" + urlencode({"subject": project["name"], "body": BASE + path})
+        enquiry_intro = paragraph(labels["role"]) + link(share, labels["share"], "secondary-link")
+    body += section(request, enquiry_intro + enquiry_form(lang, project=project), "enquiry")
     alternates = {code: project_path(project, code) for code in LANGUAGES} if project["slug"] in CONFIG["localizedProjects"] else {"en": path}
     page(path, lang, title, text["description"], body, alternates, project)
 

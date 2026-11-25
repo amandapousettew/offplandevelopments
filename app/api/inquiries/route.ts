@@ -10,6 +10,7 @@ const submission = z.object({
   company: z.string().trim().max(200),
   project: z.string().max(200),
   message: z.string().max(2000),
+  project_details: z.string().max(16000).optional(),
   updates: z.boolean()
 }).refine(data => data.kind !== "Agency partner" || Boolean(data.company));
 
@@ -19,9 +20,10 @@ export async function POST(request: Request) {
   }
   const parsed = submission.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return new Response(null, { status: 400 });
-  const data = parsed.data;
+  const {project_details, ...data} = parsed.data;
   await getDb().insert(inquiries).values({
     ...data, id: crypto.randomUUID(), email: data.email.toLowerCase(),
+    message: [data.message, project_details].filter(Boolean).join("\n\n"),
     updates: data.updates || data.kind === "Project updates" ? 1 : 0,
     created: new Date().toISOString()
   });

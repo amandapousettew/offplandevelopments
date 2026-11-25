@@ -1,11 +1,9 @@
 import {Phone,MessageCircle} from "lucide-react";
 import {BookingLink} from "./booking";
 import {useLanguage} from "./language";
+import publicSite from "./public-site.json";
 
-const team=[
- {name:"Potros Abrahim",number:"+351960006926",display:"+351 960 006 926",languages:["Nederlands","English"]},
- {name:"Amanda Pousette",number:"+46738800099",display:"+46 73 880 00 99",languages:["Svenska","English"]}
-];
+const team=[publicSite.team.potros,publicSite.team.amanda];
 export function TeamContacts(){
  const {lang}=useLanguage();
  return <div className="teamContacts">{team.map(person=><div className="teamContact" key={person.number}>

@@ -1,0 +1,23 @@
+{
+  "enquiryRecipient": "amanda.pousette.w@gmail.com",
+  "guides": {
+    "en": "en/holiday-home-spain/",
+    "sv": "sv/semesterbostad-spanien/",
+    "nl": "nl/vakantiehuis-spanje/"
+  },
+  "agents": {
+    "en": "en/for-estate-agents/",
+    "sv": "sv/for-maklare/",
+    "nl": "nl/voor-makelaars/"
+  },
+  "investments": {
+    "en": "en/investment-projects/",
+    "sv": "sv/investeringsprojekt/",
+    "nl": "nl/vastgoedinvesteringen/"
+  },
+  "localizedProjects": ["noa-villajoyosa", "polop-villas"],
+  "team": {
+    "amanda": {"name": "Amanda Pousette", "number": "+46738800099", "display": "+46 73 880 00 99", "languages": ["Svenska", "English"]},
+    "potros": {"name": "Potros Abrahim", "number": "+351960006926", "display": "+351 960 006 926", "languages": ["Nederlands", "English"]}
+  }
+}

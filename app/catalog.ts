@@ -8,3 +8,4 @@ export const amenityOptions=[
  {id:"pool",en:"Swimming pool",nl:"Zwembad"}
 ] as const;
 export const rentalStatus=(project:(typeof projects)[number])=>project.rental;
+export const isResidential=(project:(typeof projects)[number])=>project.category==="Residential development";

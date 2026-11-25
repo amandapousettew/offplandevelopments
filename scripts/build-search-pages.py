@@ -1,59 +1,396 @@
-"""Build crawlable language guides and project pages from the published catalogue."""
-from pathlib import Path
-from html import escape
+#!/usr/bin/env python3
+"""Build readable, multilingual public pages from the shared project catalogue."""
 import json
+from datetime import date
+from html import escape
+from pathlib import Path
+from urllib.parse import urlencode, urlsplit
 
-root=Path(__file__).resolve().parents[1]
-out=root/"docs"
-base="https://amandapousettew.github.io/offplandevelopments/"
-projects=json.loads((root/"app/project-data.json").read_text())
-guides={
- "en":("en/holiday-home-spain/","Buying a holiday home in Spain | New developments on the Costa Blanca","Find a new-build holiday home in Spain","Compare new developments in Benidorm, Finestrat, Polop, Villajoyosa and Valencia. Speak to Amanda or Potros about your budget, preferred location and how you plan to use your home.",[
- ("Compare the location before choosing a holiday home","A home on the Costa Blanca can mean a coastal apartment, an inland villa or a tourist apartment with operating conditions. Check the exact address, airport route, public transport and beach access for each project."),
- ("Buying off-plan in Spain","Request the unit floor plan, specification, total purchase costs, payment milestones and expected completion date. Our project pages identify the supplied documents and flag information that still needs confirmation."),
- ("Can I rent out my holiday home?","Ask about permitted use, any management agreement, personal-use restrictions and ongoing costs for the specific home. A residential apartment, tourist apartment and hotel investment can have different terms. Request confirmation before relying on rental projections."),
- ("Looking for a home in Portugal?","Tell us which region you are considering, such as the Algarve, and whether you want personal use or a rental property. Our current documented collection is in Spain. Contact the team about Portugal rather than treating the Spanish catalogue as Portuguese stock.")
- ]),
- "sv":("sv/semesterbostad-spanien/","Köpa semesterbostad i Spanien | Nyproduktion Costa Blanca","Köpa semesterbostad i Spanien","Letar du efter ett hem i solen? Jämför nyproduktion på Costa Blanca och i Valencia. Amanda hjälper dig på svenska och engelska att hitta rätt projekt utifrån budget, läge och hur du vill använda bostaden.",[
- ("Nyproduktion på Costa Blanca","Jämför lägenheter i Benidorm och Villajoyosa med villor i Finestrat och Polop. Kontrollera den exakta adressen, vägen till stranden och förbindelserna till Alicante flygplats. En villa i inlandet ger andra förutsättningar än en lägenhet vid kusten."),
- ("Köpa bostad på ritning i Spanien","Be om bostadens planritning, tekniska beskrivning, totalpris, betalningsplan och beräknade färdigställande. Vi samlar frågor till utvecklaren och uppmärksammar uppgifter som saknas eller skiljer sig mellan dokumenten."),
- ("Kan jag hyra ut min semesterbostad?","Kontrollera tillåten användning, eventuellt förvaltningsavtal, begränsningar för eget bruk och löpande kostnader för den aktuella bostaden. En vanlig bostad, turistlägenhet och hotellinvestering kan ha olika villkor. Beräknad avkastning är en prognos."),
- ("Söker du semesterbostad i Portugal?","Berätta om du söker en lägenhet eller villa i exempelvis Algarve, vilken budget du har och om du vill bo där själv eller hyra ut. Det dokumenterade utbudet på webbplatsen ligger för närvarande i Spanien. Kontakta oss om din sökning i Portugal.")
- ]),
- "nl":("nl/vakantiehuis-spanje/","Vakantiehuis kopen Spanje | Nieuwbouw Costa Blanca","Een vakantiehuis kopen in Spanje","Zoek je een tweede woning in de zon? Vergelijk nieuwbouwprojecten aan de Costa Blanca en in Valencia. Potros helpt je in het Nederlands en Engels bij het vergelijken van locatie, budget en het gebruik van jouw toekomstige woning.",[
- ("Nieuwbouw aan de Costa Blanca vergelijken","Vergelijk appartementen in Benidorm en Villajoyosa met villa’s in Finestrat en Polop. Bekijk het exacte adres, de route naar het strand en de verbinding met de luchthaven van Alicante. Een villa in het binnenland biedt andere mogelijkheden dan een appartement aan de kust."),
- ("Een woning op tekening kopen in Spanje","Vraag om de plattegrond, technische omschrijving, totale aankoopkosten, betalingstermijnen en verwachte opleverdatum. Wij leggen openstaande vragen terug bij de ontwikkelaar en benoemen verschillen tussen de aangeleverde documenten."),
- ("Kan ik mijn vakantiewoning verhuren?","Controleer toegestaan gebruik, beheerovereenkomsten, beperkingen voor eigen gebruik en terugkerende kosten voor de specifieke woning. Een woonappartement, toeristisch appartement en hotelinvestering kunnen verschillende voorwaarden hebben. Rendementsberekeningen zijn prognoses."),
- ("Een vakantiehuis kopen in Portugal","Vertel ons of je een appartement of villa zoekt, bijvoorbeeld in de Algarve, en wat je budget en verhuurwensen zijn. Het huidige gedocumenteerde aanbod op deze website ligt in Spanje. Neem contact op voor jouw zoektocht in Portugal.")
- ])
-}
-style="""body{margin:0;background:#fafafa;color:#373737;font:17px/1.65 Arial,sans-serif}main,header,footer{max-width:1040px;margin:auto;padding:24px}header{display:flex;align-items:center;justify-content:space-between;gap:20px}header img{width:220px;max-width:55vw}nav{display:flex;gap:16px;flex-wrap:wrap}a{color:inherit;text-underline-offset:4px}h1{font:clamp(34px,6vw,60px)/1.12 Georgia,serif;max-width:21ch;margin:32px 0 24px}h2{font:30px/1.2 Georgia,serif}p{max-width:75ch}section{padding:22px 0;border-bottom:1px solid #ddd}.cta{display:inline-block;padding:12px 22px;border-radius:28px;background:#373737;color:white;text-decoration:none;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px}.grid img{width:100%;height:200px;object-fit:cover}.grid h3{margin-bottom:0}.meta{font-size:.85rem;color:#555}.photo{width:100%;max-height:480px;object-fit:cover}dl{display:grid;grid-template-columns:minmax(100px,180px) 1fr;gap:10px}dt{font-weight:bold}dd{margin:0}.plan{max-width:100%;height:auto}footer{border-top:1px solid #ddd}"""
-def page(path,lang,title,description,body,alternates=None,schema=None):
- url=base+path
- links=''.join(f'<link rel="alternate" hreflang="{l}" href="{base+g[0]}">' for l,g in guides.items()) if alternates else ""
- schema=schema or {"@context":"https://schema.org","@type":"WebPage","name":title,"url":url,"inLanguage":lang,"description":description}
- schema_json=json.dumps(schema,ensure_ascii=False).replace("<",chr(92)+"u003c")
- html=f'<!doctype html><html lang="{lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{escape(title)}</title><meta name="description" content="{escape(description,quote=True)}"><link rel="canonical" href="{url}">{links}<meta property="og:title" content="{escape(title,quote=True)}"><meta property="og:description" content="{escape(description,quote=True)}"><meta property="og:url" content="{url}"><meta property="og:type" content="website"><style>{style}</style><script type="application/ld+json">{schema_json}</script></head><body><header><a href="{base}"><img src="{base}offplandevelopments-logo.svg" alt="OffplanDevelopments"></a><nav>'+''.join(f'<a href="{base+g[0]}" lang="{l}">{label}</a>' for (l,g),label in zip(guides.items(),["English","Svenska","Nederlands"]))+'</nav></header><main>'+body+f'</main><footer><p>Potros Abrahim · Nederlands / English · <a href="tel:+351960006926">+351 960 006 926</a><br>Amanda Pousette · Svenska / English · <a href="tel:+46738800099">+46 73 880 00 99</a></p><a href="{base}">OffplanDevelopments</a></footer></body></html>'
- dest=out/path/"index.html";dest.parent.mkdir(parents=True,exist_ok=True);dest.write_text(html)
-urls=[base]
-for lang,(path,title,h1,intro,sections) in guides.items():
- body=f'<h1>{h1}</h1><p>{intro}</p><a class="cta" href="{base}?lang={"nl" if lang=="nl" else "en"}#projekt">'+{"sv":"Se projekten","nl":"Bekijk projecten","en":"Explore developments"}[lang]+'</a>'
- for heading,copy in sections:body+=f'<section><h2>{heading}</h2><p>{copy}</p></section>'
- body+='<section><h2>'+{"sv":"Aktuella projekt i Spanien","nl":"Projecten in Spanje","en":"Projects in Spain"}[lang]+'</h2><div class="grid">'
- for p in projects:
-  body+=f'<article><a href="{base}projects/{p["slug"]}/"><img loading="lazy" src="{base}project-images/{p["image"]}.webp" alt="{escape(p["name"])} – {escape(p["town"])}"><h3>{escape(p["name"])}</h3></a><p>{escape(p["town"])} · {escape(p["category"])}</p></article>'
- body+='</div></section>'
- page(path,lang,title,intro,body,alternates=True);urls.append(base+path)
-for p in projects:
- path="projects/"+p["slug"]+"/"
- title=p["name"]+" | "+p["town"]+" new development"
- body=f'<h1>{escape(p["name"])}</h1><p>{escape(p["town"])} · {escape(p["region"])} · {escape(p["category"])}</p><img class="photo" src="{base}project-images/{p["image"]}.webp" alt="{escape(p["name"])} developer rendering"><p>{escape(p["description"])}</p><section><h2>Project facts</h2><dl>'
- facts=[("Layout",p["bedrooms"]),("Area",p["area"]),("Price","Request current price" if p["price"] is None else "From €"+format(p["price"],",.2f")),("Tax and costs",p["tax"]),("Completion",p["completion"]),("Ownership",p["tenure"])]
- for label,value in facts:body+=f'<dt>{label}</dt><dd>{escape(value)}</dd>'
- body+='</dl></section>'+f'<section><h2>Before you reserve</h2><p>{escape(p["note"])}</p><p>{escape(p["payment"])}</p><p class="meta">Source pack — {escape(p["source"])}. Reviewed 25 November 2026. Current availability and final contract terms require confirmation.</p></section>'
- if p["plan"]:body+=f'<section><h2>Plan from the project pack</h2><a href="{base}project-plans/{p["plan"]}.png"><img class="plan" loading="lazy" src="{base}project-plans/{p["plan"]}.png" alt="{escape(p["name"])} project plan"></a></section>'
- body+=f'<a class="cta" href="{base}?project={p["slug"]}#projekt">Enquire about {escape(p["name"])}</a>'
- schema={"@context":"https://schema.org","@type":"WebPage","name":title,"url":base+path,"description":p["description"],"inLanguage":"en","dateModified":"2026-11-25","about":{"@type":"Place","name":p["name"],"address":{"@type":"PostalAddress","addressLocality":p["town"],"addressCountry":"ES"}}}
- page(path,"en",title,p["description"],body,schema=schema);urls.append(base+path)
-(out/"sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join('<url><loc>'+u+'</loc></url>' for u in urls)+'</urlset>')
-(out/"robots.txt").write_text("User-agent: *\nAllow: /\nSitemap: "+base+"sitemap.xml\n")
+from search_content import COPY, PROJECT_COPY, TRAVEL
+
+ROOT = Path(__file__).resolve().parents[1]
+OUTPUT = ROOT / "docs"
+BASE = "https://amandapousettew.github.io/offplandevelopments/"
+PREFIX = urlsplit(BASE).path
+CONFIG = json.loads((ROOT / "app/public-site.json").read_text())
+PROJECTS = json.loads((ROOT / "app/project-data.json").read_text())
+BY_SLUG = {project["slug"]: project for project in PROJECTS}
+LANGUAGES = {"en": "English", "sv": "Svenska", "nl": "Nederlands"}
+PROJECT_PREFIXES = {"en": "projects/", "sv": "sv/projekt/", "nl": "nl/projecten/"}
+MONTHS_NOVEMBER = {"en": "November", "sv": "november", "nl": "november"}
+AGENT_PROJECTS = ["noa-villajoyosa", "polop-villas", "sierra-verde-finestrat"]
+URLS = [BASE]
+
+
+def path_to(path=""):
+    return PREFIX + path
+
+
+def project_path(project, lang):
+    slug = project["slug"]
+    prefix = PROJECT_PREFIXES[lang] if slug in CONFIG["localizedProjects"] else PROJECT_PREFIXES["en"]
+    return f"{prefix}{slug}/"
+
+
+def contact_for(lang):
+    return CONFIG["team"]["potros" if lang == "nl" else "amanda"]
+
+
+def link(url, text, class_name=""):
+    css = f' class="{class_name}"' if class_name else ""
+    return f'<a href="{escape(url, quote=True)}"{css}>{escape(text)}</a>'
+
+
+def whatsapp(lang, project=None, floating=False):
+    person = contact_for(lang)
+    templates = {
+        "en": "Hi, I'd like more information about {}.",
+        "sv": "Hej! Jag vill gärna veta mer om {}.",
+        "nl": "Hoi, ik wil graag meer informatie over {}.",
+    }
+    url = "https://wa.me/" + person["number"][1:]
+    if project:
+        url += "?" + urlencode({"text": templates[lang].format(project["name"])})
+    css = "whatsapp" + (" floating-whatsapp" if floating else "")
+    name = "WhatsApp " + person["name"]
+    return (f'<a class="{css}" href="{escape(url, quote=True)}" aria-label="{escape(name)}" '
+            f'target="_blank" rel="noopener noreferrer"><img src="{path_to("whatsapp.svg")}" '
+            'width="20" height="20" alt=""><span>WhatsApp</span></a>')
+
+
+def contacts(lang):
+    primary = contact_for(lang)
+    team = [primary] + [person for person in CONFIG["team"].values() if person != primary]
+    rows = ''.join(
+        f'<div><strong>{escape(person["name"])}</strong><br>{escape(" · ".join(person["languages"]))}<br>'
+        f'{link("tel:" + person["number"], person["display"])} · '
+        f'{link("https://wa.me/" + person["number"][1:], "WhatsApp")}</div>'
+        for person in team
+    )
+    return f'<div class="contacts">{rows}</div>'
+
+
+def page(path, lang, title, description, body, alternates, project=None):
+    labels = COPY[lang]["labels"]
+    url = BASE + path
+    browser_title = title + " | OffplanDevelopments"
+    hreflang = ""
+    if len(alternates) > 1:
+        hreflang = "".join(
+            f'<link rel="alternate" hreflang="{code}" href="{BASE + alternate}">'
+            for code, alternate in alternates.items()
+        ) + f'<link rel="alternate" hreflang="x-default" href="{BASE + alternates["en"]}">'
+    schema = {
+        "@context": "https://schema.org", "@type": "WebPage", "name": title, "url": url,
+        "inLanguage": lang, "description": description,
+        "publisher": {"@type": "Organization", "name": "OffplanDevelopments", "url": BASE},
+    }
+    if project:
+        schema["about"] = {"@type": "Place", "name": project["name"],
+                           "address": {"@type": "PostalAddress", "addressLocality": project["town"], "addressCountry": "ES"}}
+    schema_text = json.dumps(schema, ensure_ascii=False).replace("<", "\\u003c")
+    nav = "".join(link(path_to(CONFIG[group][lang]), labels[label])
+                  for group, label in (("guides", "guide"), ("agents", "agents"), ("investments", "investments")))
+    languages = "".join(
+        f'<a href="{path_to(alternate)}" lang="{code}" hreflang="{code}"'
+        + (' aria-current="page"' if code == lang else '') + f'>{LANGUAGES[code]}</a>'
+        for code, alternate in alternates.items()
+    )
+    html = f"""<!doctype html>
+<html lang="{lang}">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>{escape(browser_title)}</title>
+ <meta name="description" content="{escape(description, quote=True)}">
+ <link rel="canonical" href="{url}">
+ {hreflang}
+ <meta property="og:title" content="{escape(browser_title, quote=True)}">
+ <meta property="og:description" content="{escape(description, quote=True)}">
+ <meta property="og:url" content="{url}">
+ <meta property="og:type" content="website">
+ <link rel="icon" href="{path_to("favicon.svg")}">
+ <link rel="stylesheet" href="{path_to("property-guides.css")}">
+ <script type="application/ld+json">{schema_text}</script>
+ <script type="module" src="{path_to("enquiry-form.mjs")}"></script>
+</head>
+<body>
+ <header class="site-header">
+  <div class="shell header-row">
+   <a href="{path_to()}"><img src="{path_to("offplandevelopments-logo.svg")}" width="206" height="57" alt="OffplanDevelopments"></a>
+   <nav>{nav}</nav>
+  </div>
+ </header>
+ <main class="shell">
+  <nav class="language-switch" aria-label="Language">{languages}</nav>
+  {body}
+ </main>
+ <footer class="site-footer">
+  <div class="shell">
+   <h2>{escape(labels["contact"])}</h2>
+   {contacts(lang)}
+   <p>{link(path_to(), "OffplanDevelopments")}</p>
+  </div>
+ </footer>
+ {whatsapp(lang, project, floating=True)}
+</body>
+</html>
+"""
+    target = OUTPUT / path / "index.html"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("\n".join(line.rstrip() for line in html.splitlines()) + "\n", encoding="utf-8")
+    URLS.append(url)
+
+
+def money(amount, lang):
+    precision = ".0f" if amount == int(amount) else ".2f"
+    value = format(amount, "," + precision)
+    if lang == "nl":
+        return "€ " + value.translate(str.maketrans(",.", ".,"))
+    if lang == "sv":
+        return value.translate(str.maketrans(",.", " ,")) + " €"
+    return "€" + value
+
+
+def project_text(project, lang):
+    return PROJECT_COPY.get(project["slug"], {}).get(lang, project)
+
+
+def shown_price(project, lang):
+    labels = COPY[lang]["labels"]
+    if project["price"] is None:
+        return labels["on_request"]
+    suffixes = {
+        ("nl", "Excl. 10% VAT"): "excl. 10% btw", ("sv", "Excl. 10% VAT"): "exkl. 10 % moms",
+        ("nl", "Excl. VAT"): "excl. btw", ("sv", "Excl. VAT"): "exkl. moms",
+        ("nl", "VAT basis to confirm"): "btw te bevestigen", ("sv", "VAT basis to confirm"): "moms att bekräfta"
+    }
+    note = suffixes.get((lang, project["priceNote"]), project["priceNote"])
+    price = labels["from"] + " " + money(project["price"], lang)
+    return price + (" · " + note if note else "")
+
+
+def date_label(value, lang):
+    reviewed = date.fromisoformat(value)
+    if reviewed.month == 11:
+        return f"{reviewed.day} {MONTHS_NOVEMBER[lang]} {reviewed.year}"
+    return reviewed.isoformat()
+
+
+def section(title, body, identifier=""):
+    attr = f' id="{identifier}"' if identifier else ""
+    return f'<section{attr}><h2>{escape(title)}</h2>{body}</section>'
+
+
+def paragraph(text, class_name=""):
+    attr = f' class="{class_name}"' if class_name else ""
+    return f'<p{attr}>{escape(text)}</p>'
+
+
+def facts(values):
+    return '<dl>' + "".join(f'<dt>{escape(label)}</dt><dd>{escape(value)}</dd>' for label, value in values) + '</dl>'
+
+
+def project_cards(projects, lang):
+    labels = COPY[lang]["labels"]
+    types = COPY[lang]["types"]
+    cards = []
+    for project in projects:
+        text = project_text(project, lang)
+        page_url = path_to(project_path(project, lang))
+        compact_facts = [(labels["type"], types.get(project["type"], project["type"])), (labels["price"], shown_price(project, lang))]
+        if lang == "en" or "title" in text:
+            compact_facts.append((labels["completion"], text["completion"]))
+        compact_facts += [
+            (labels["status"], labels["status_value"]),
+            (labels["reviewed"], date_label(project["reviewed"], lang)),
+        ]
+        cards.append(
+            f'<article class="project-card"><a href="{page_url}"><img loading="lazy" '
+            f'src="{path_to("project-images/" + project["image"] + ".webp")}" alt="{escape(project["name"])}"></a>'
+            f'<div class="card-content"><p class="meta">{escape(project["town"])}</p>'
+            f'<h3>{link(page_url, project["name"])}</h3>{facts(compact_facts)}</div></article>'
+        )
+    return '<div class="card-grid">' + "".join(cards) + '</div>'
+
+
+def field(label, name, input_type="text", required=False, autocomplete="", max_length=150):
+    req = " required" if required else ""
+    complete = f' autocomplete="{autocomplete}"' if autocomplete else ""
+    return (f'<label>{escape(label)}<input name="{name}" type="{input_type}" maxlength="{max_length}"'
+            f'{complete}{req}></label>')
+
+
+def enquiry_form(lang, *, agent=False, project=None):
+    words = COPY[lang]["form"]
+    recipient = CONFIG["enquiryRecipient"]
+    investment = project is not None and project["category"] != "Residential development"
+    kind = "Developer introduction" if agent else "Investment project enquiry" if investment else "Buyer project enquiry"
+    subject = "OffplanDevelopments — " + kind
+    if project:
+        subject += " — " + project["name"]
+    agent_fields = field(words["agency"], "agency", required=True, autocomplete="organization", max_length=200) if agent else ""
+    target_lang = LANGUAGES[lang]
+    intake = ""
+    if agent or project is None:
+        intake = (field(words["area"], "area", required=agent) + field(words["budget"], "budget", required=agent)
+                  + field(words["type"], "property_type", required=agent) + field(words["timing"], "timing", required=agent))
+    relationship = ""
+    if not agent and not investment:
+        choices = ''.join(f'<option value="{key}">{escape(words[translation])}</option>'
+                          for key, translation in (("existing agent", "yes"), ("request agent introduction", "intro"), ("exploring", "unsure")))
+        relationship = (f'<label class="wide-field">{escape(words["agent"])}<select name="agent_status">'
+                        f'<option value="">{escape(words["choose"])}</option>{choices}</select></label>')
+    context = (f'<input type="hidden" name="project" value="{escape(project["name"], quote=True)}">' if project else "")
+    return f"""<form class="enquiry-form" method="post" action="https://formsubmit.co/{recipient}" data-enquiry-form>
+ <input type="hidden" name="_subject" value="{escape(subject, quote=True)}">
+ <input type="hidden" name="_template" value="table">
+ <input type="hidden" name="kind" value="{kind}">
+ <input type="hidden" name="language" value="{target_lang}">
+ {context}
+ <div data-fields class="form-fields">
+  {field(words["name"], "name", required=True, autocomplete="name")}
+  {field(words["email"], "email", "email", required=True, autocomplete="email", max_length=254)}
+  {agent_fields}
+  {field(words["phone"], "phone", "tel", autocomplete="tel", max_length=40)}
+  {intake}
+  {relationship}
+  <label class="wide-field">{escape(words["message"])}<textarea name="message" rows="4" maxlength="2000"></textarea></label>
+  <div class="wide-field">
+   {paragraph(words["privacy"], "meta")}
+   <p class="error" data-error role="alert" hidden>{escape(words["error"])}</p>
+   <button class="button" type="submit">{escape(words["send"])}</button>
+  </div>
+ </div>
+ <p class="confirmation" data-sent role="status" tabindex="-1" hidden>{escape(words["success"])}</p>
+</form>"""
+
+
+def travel_section(project, lang):
+    info = TRAVEL.get(project["slug"])
+    labels = COPY[lang]["labels"]
+    if not info:
+        return section(labels["town"], paragraph(project["town"]) +
+                       link(project["locationUrl"], labels["location"]))
+
+    def route(origin, destination, mode):
+        return "https://www.google.com/maps/dir/?" + urlencode({
+            "api": 1, "origin": origin, "destination": destination, "travelmode": mode,
+        })
+
+    airport = "Alicante–Elche Miguel Hernández Airport"
+    routes = [
+        (project["locationUrl"], labels["location"]),
+        (route(info["site"], info["beach"], info["beach_mode"]), labels["directions_beach"]),
+        (route(airport, info["site"], "transit"), labels["directions_airport"]),
+        (route(info["site"], airport, "transit"), labels["directions_return"]),
+    ]
+    sources = [(info["beach_source"], labels["source_beach"]),
+               (info["operator"], labels[info["operator_label"]]),
+               (info["airport_info"], labels["source_airport"])]
+    anchors = "".join(link(url, name) for url, name in routes)
+    references = " · ".join(link(url, name) for url, name in sources)
+    body = paragraph(info["text"][lang]) + f'<div class="section-links">{anchors}</div><p class="meta">{labels["source"]} · {references}</p>'
+    return section(labels["travel"], body, "travel")
+
+
+def intro(title, description, eyebrow="", actions=""):
+    marker = f'<p class="eyebrow">{escape(eyebrow)}</p>' if eyebrow else ""
+    return f'<div class="intro">{marker}<h1>{escape(title)}</h1>{paragraph(description, "lede")}{actions}</div>'
+
+
+def build_guide(lang):
+    content = COPY[lang]
+    labels = content["labels"]
+    title, subtitle, description = content["guide"]
+    nav = link("#compare", subtitle, "button") + " " + link("#enquiry", labels["request"], "secondary-link")
+    body = intro(title, description, subtitle, f'<div class="section-links">{nav}</div>')
+    comparisons = []
+    for slug, area, copy in content["areas"]:
+        project = BY_SLUG[slug]
+        comparisons.append(f'<article><h3>{escape(area)}</h3>{paragraph(copy)}'
+                           f'{link(path_to(project_path(project, lang)), project["name"])}</article>')
+    body += section(labels["regions"], '<div class="area-grid">' + "".join(comparisons) + "</div>", "compare")
+    body += section(labels["homes"], project_cards([p for p in PROJECTS if p["category"] == "Residential development"], lang))
+    body += '<div class="questions">' + "".join(section(heading, paragraph(copy)) for heading, copy in content["questions"]) + '</div>'
+    body += section(labels["request"], paragraph(labels["role"]) + enquiry_form(lang), "enquiry")
+    body += '<div class="section-links bottom-links">' + link(path_to("?lang=" + ("nl" if lang == "nl" else "en") + "#projekt"), labels["browse"]) + link(path_to(CONFIG["investments"][lang]), labels["investment_projects"]) + '</div>'
+    page(CONFIG["guides"][lang], lang, f"{title} | {subtitle}", description, body, CONFIG["guides"])
+
+
+def build_agents(lang):
+    content = COPY[lang]
+    labels = content["labels"]
+    title, heading, description = content["agents"]
+    body = intro(heading, description, labels["agents"], link("#enquiry", labels["ask_intro"], "button"))
+    steps = '<ol class="steps">' + "".join(f'<li><h3>{escape(heading)}</h3>{paragraph(text)}</li>' for heading, text in content["steps"]) + "</ol>"
+    body += section(labels["steps"], steps)
+    projects = [BY_SLUG[slug] for slug in AGENT_PROJECTS]
+    body += section(labels["compare"], project_cards(projects, lang))
+    body += section(labels["ask_intro"], enquiry_form(lang, agent=True), "enquiry")
+    developer = paragraph(labels["developer_text"]) + link(path_to("?enquiry=developer&lang=" + ("nl" if lang == "nl" else "en") + "#partner"), labels["developer_cta"])
+    body += section(labels["developer"], developer)
+    page(CONFIG["agents"][lang], lang, title, description, body, CONFIG["agents"])
+
+
+def build_investments(lang):
+    title, heading, description = COPY[lang]["investments"]
+    labels = COPY[lang]["labels"]
+    body = intro(heading, description)
+    body += section(labels["investment_projects"], project_cards([p for p in PROJECTS if p["category"] != "Residential development"], lang))
+    body += '<div class="bottom-links">' + link(path_to("?catalogue=investments&lang=" + ("nl" if lang == "nl" else "en") + "#projekt"), labels["browse"]) + '</div>'
+    page(CONFIG["investments"][lang], lang, title, description, body, CONFIG["investments"])
+
+
+def build_project(project, lang):
+    text = project_text(project, lang)
+    labels = COPY[lang]["labels"]
+    residential = project["category"] == "Residential development"
+    request = labels["request" if residential else "investment_request"]
+    title = text.get("title", f'{project["name"]} | New development in {project["town"]}')
+    path = project_path(project, lang)
+    actions = link("#enquiry", request, "button")
+    if residential:
+        share = "mailto:?" + urlencode({"subject": project["name"], "body": BASE + path})
+        actions += link(share, labels["share"], "secondary-link")
+    body = intro(project["name"], text["description"], project["town"] + " · " + project["region"], f'<div class="section-links">{actions}</div>')
+    body += (f'<img class="project-photo" src="{path_to("project-images/" + project["image"] + ".webp")}" '
+             f'alt="{escape(project["name"])}" fetchpriority="high">')
+    values = [(labels["type"], COPY[lang]["types"].get(project["type"], project["type"])),
+              (labels["layout"], text["bedrooms"]), (labels["area"], text["area"]), (labels["price"], shown_price(project, lang)),
+              (labels["tax"], text["tax"]), (labels["completion"], text["completion"]), (labels["status"], labels["status_value"])]
+    if not residential:
+        values.append(("Ownership and use", project["tenure"]))
+    body += section(labels["facts"], facts(values))
+    source = paragraph(labels["source"] + " · " + text["source"], "meta")
+    source += paragraph(labels["reviewed"] + " " + date_label(project["reviewed"], lang), "meta")
+    body += section(labels["before"], paragraph(text["note"]) + paragraph(text["payment"]) + source)
+    if project["plan"]:
+        plan = path_to("project-plans/" + project["plan"] + ".png")
+        body += section(labels["plan"], f'<a href="{plan}"><img class="floor-plan" loading="lazy" src="{plan}" alt="{escape(labels["plan"] + ": " + project["name"])}"></a>')
+    body += travel_section(project, lang)
+    body += section(request, (paragraph(labels["role"]) if residential else "") + enquiry_form(lang, project=project), "enquiry")
+    alternates = {code: project_path(project, code) for code in LANGUAGES} if project["slug"] in CONFIG["localizedProjects"] else {"en": path}
+    page(path, lang, title, text["description"], body, alternates, project)
+
+
+def main():
+    for lang in LANGUAGES:
+        build_guide(lang)
+        build_agents(lang)
+        build_investments(lang)
+    for project in PROJECTS:
+        build_project(project, "en")
+        if project["slug"] in CONFIG["localizedProjects"]:
+            build_project(project, "sv")
+            build_project(project, "nl")
+    sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    sitemap += "".join(f"  <url><loc>{url}</loc></url>\n" for url in URLS) + "</urlset>\n"
+    (OUTPUT / "sitemap.xml").write_text(sitemap, encoding="utf-8")
+    (OUTPUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}sitemap.xml\n", encoding="utf-8")
+    source = ROOT / "app/enquiry-source.mjs"
+    (OUTPUT / source.name).write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()
